@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://201325iki-hub.github.io/irina-ai/sitemap.xml
