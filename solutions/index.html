@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Сайты, AI-ассистенты, чат-боты и автоматизация рабочих процессов для бизнеса: меньше потерянных заявок и ручной рутины, больше управляемых продаж.">
+  <meta name="theme-color" content="#f3e8d7">
+  <link rel="canonical" href="https://201325iki-hub.github.io/irina-ai/solutions/">
+  <title>Ирина — сайты, AI и автоматизация для бизнеса</title>
+  <style>
+    :root {
+      --parchment: #f3e8d7;
+      --paper: #fbf7f0;
+      --espresso: #2c211c;
+      --coffee: #55463e;
+      --brass: #a47a45;
+      --brass-dark: #76522f;
+      --heading-brown: #6a4229;
+      --line: rgba(44, 33, 28, 0.18);
+      --line-strong: #b88a5e;
+      --shadow: 0 28px 80px rgba(69, 49, 36, 0.16);
+      --glow: 0 18px 52px rgba(128, 83, 45, 0.13);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      color: var(--espresso);
+      background: var(--parchment);
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 82% 7%, rgba(255, 255, 255, 0.92), transparent 27%),
+        radial-gradient(circle at 8% 34%, rgba(190, 143, 94, 0.16), transparent 31%),
+        linear-gradient(135deg, #fbf5eb 0%, var(--parchment) 46%, #dfc4a4 100%);
+    }
+
+    a { color: inherit; }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    button { font: inherit; }
+
+    :focus-visible {
+      outline: 3px solid #5b3c20;
+      outline-offset: 4px;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: 12px;
+      left: 12px;
+      padding: 10px 14px;
+      transform: translateY(-160%);
+      border-radius: 10px;
+      background: var(--espresso);
+      color: #fff;
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    .site-header {
+      position: sticky;
+      z-index: 50;
+      top: 0;
+      border-bottom: 1px solid rgba(44, 33, 28, 0.1);
+      background: rgba(250, 243, 233, 0.92);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 30px rgba(74, 49, 31, 0.06);
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      color: var(--espresso);
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand span { color: var(--brass-dark); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    .nav-links a:hover { color: var(--brass-dark); }
+
+    .button {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 22px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 750;
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .button:hover { transform: translateY(-2px); box-shadow: var(--glow); }
+
+    .button--primary {
+      border-color: var(--espresso);
+      background: linear-gradient(135deg, #2c211c 0%, #5b3b27 100%);
+      color: #fffaf2;
+      box-shadow: 0 14px 34px rgba(44, 33, 28, 0.2);
+    }
+
+    .button--soft { background: rgba(255, 255, 255, 0.38); }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--espresso);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .hero {
+      min-height: calc(100svh - 72px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+      align-items: stretch;
+      gap: clamp(32px, 6vw, 86px);
+      padding-block: clamp(34px, 5vw, 66px);
+    }
+
+    .hero-copy { align-self: center; }
+
+    h1, h2, h3, p { text-wrap: pretty; }
+
+    h1, h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 0.98;
+    }
+
+    h1 { font-size: clamp(3rem, 6.3vw, 6.1rem); }
+
+    h2 { font-size: clamp(2.35rem, 4.4vw, 4.4rem); }
+
+    .hero h1 em {
+      display: block;
+      color: var(--brass-dark);
+      font-weight: 500;
+    }
+
+    .hero-lead {
+      max-width: 650px;
+      margin: 28px 0 0;
+      color: var(--coffee);
+      font-size: clamp(1.08rem, 1.7vw, 1.32rem);
+    }
+
+    .hero-list {
+      margin: 26px 0 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .hero-list li {
+      padding: 8px 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.67), rgba(246, 230, 208, 0.58));
+      box-shadow: 0 8px 22px rgba(89, 59, 37, 0.07);
+      font-size: 0.94rem;
+      font-weight: 650;
+    }
+
+    .hero-actions {
+      margin-top: 34px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-note {
+      margin: 18px 0 0;
+      color: #6a5b52;
+      font-size: 0.9rem;
+    }
+
+    .portrait {
+      position: relative;
+      align-self: stretch;
+      min-height: 650px;
+      padding: 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 220px 220px 30px 30px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(210, 174, 130, 0.34));
+      box-shadow: var(--shadow);
+    }
+
+    .portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      border-radius: 208px 208px 22px 22px;
+      background: #e0ccb2;
+    }
+
+    .portrait-caption {
+      position: absolute;
+      right: -22px;
+      bottom: 34px;
+      max-width: 220px;
+      padding: 14px 17px;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 16px;
+      background: rgba(251, 247, 240, 0.92);
+      box-shadow: 0 12px 32px rgba(44, 33, 28, 0.14);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    section { padding-block: clamp(72px, 10vw, 130px); }
+
+    .section-heading {
+      max-width: 850px;
+      margin-bottom: 42px;
+    }
+
+    .section-heading h2,
+    .contact-box h2 { color: var(--heading-brown); }
+
+    .section-heading p:last-child {
+      max-width: 680px;
+      margin: 22px 0 0;
+      color: var(--coffee);
+      font-size: 1.08rem;
+    }
+
+    .pain-section {
+      border-block: 1px solid var(--line-strong);
+      background:
+        radial-gradient(circle at 88% 28%, rgba(182, 133, 78, 0.16), transparent 24%),
+        linear-gradient(150deg, rgba(255, 252, 246, 0.84), rgba(231, 207, 176, 0.6));
+    }
+
+    .pain-grid {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: clamp(24px, 5vw, 72px);
+      align-items: start;
+    }
+
+    .pain-buttons {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pain-button {
+      min-height: 64px;
+      width: 100%;
+      padding: 16px 20px;
+      border: 1px solid var(--line-strong);
+      border-radius: 16px;
+      background: rgba(255, 252, 246, 0.7);
+      color: var(--espresso);
+      cursor: pointer;
+      text-align: left;
+      font-weight: 720;
+    }
+
+    .pain-button[aria-pressed="true"] {
+      border-color: var(--espresso);
+      background: var(--espresso);
+      color: #fffaf2;
+    }
+
+    .recommendation {
+      min-height: 286px;
+      padding: clamp(26px, 4vw, 48px);
+      border-radius: var(--radius);
+      border: 1px solid #c39a70;
+      background:
+        radial-gradient(circle at 92% 10%, rgba(212, 161, 104, 0.24), transparent 34%),
+        linear-gradient(145deg, #2b201b 0%, #513523 100%);
+      color: #fffaf2;
+      box-shadow: var(--shadow);
+    }
+
+    .recommendation small {
+      color: #dec4a1;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .recommendation h3 {
+      margin: 18px 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.65rem, 3vw, 2.55rem);
+      line-height: 1.08;
+      font-weight: 500;
+    }
+
+    .recommendation p { margin: 0; color: #e9ddd0; }
+
+    .recommendation .button {
+      margin-top: 26px;
+      border-color: #eadbc8;
+      color: #fffaf2;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .service-card {
+      min-height: 270px;
+      padding: clamp(24px, 4vw, 38px);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(255, 253, 248, 0.82), rgba(238, 216, 187, 0.58));
+      box-shadow: 0 16px 40px rgba(83, 54, 34, 0.09);
+    }
+
+    .service-card::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(#d2ae82, #8f5f39);
+    }
+
+    .service-card span {
+      color: var(--brass-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.15rem;
+    }
+
+    .service-card h3 {
+      margin: 38px 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.6rem, 2.7vw, 2.45rem);
+      line-height: 1.08;
+      font-weight: 500;
+      color: var(--heading-brown);
+    }
+
+    .service-card p { margin: 0; color: var(--coffee); }
+
+    .method {
+      border-block: 1px solid var(--line-strong);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.74), transparent 27%),
+        linear-gradient(135deg, #ead6bb 0%, #f8efe2 48%, #d7b68f 100%);
+      color: var(--espresso);
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .method-card {
+      padding: 28px;
+      border: 1px solid var(--line-strong);
+      border-radius: 22px;
+      background: rgba(255, 252, 246, 0.54);
+      box-shadow: 0 14px 34px rgba(79, 51, 31, 0.09);
+    }
+
+    .method-card strong {
+      display: block;
+      margin-bottom: 26px;
+      color: var(--brass-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+    }
+
+    .method-card h3 { margin: 0 0 10px; color: var(--heading-brown); font-size: 1.1rem; }
+
+    .method-card p { margin: 0; color: var(--coffee); }
+
+    .contact {
+      text-align: center;
+    }
+
+    .contact-box {
+      padding: clamp(38px, 7vw, 86px);
+      border: 1px solid var(--line-strong);
+      border-radius: 38px;
+      background:
+        radial-gradient(circle at 88% 12%, rgba(191, 142, 90, 0.2), transparent 28%),
+        linear-gradient(145deg, rgba(255, 253, 248, 0.88), rgba(234, 210, 180, 0.62));
+      box-shadow: var(--shadow);
+    }
+
+    .contact-box h2 { max-width: 900px; margin-inline: auto; }
+
+    .contact-box > p {
+      max-width: 670px;
+      margin: 24px auto 0;
+      color: var(--coffee);
+    }
+
+    .contact-actions {
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .contact-caption {
+      margin-top: 20px !important;
+      font-size: 0.88rem;
+    }
+
+    footer {
+      padding: 44px 0 50px;
+      border-top: 1px solid var(--line-strong);
+      color: #e8d9c8;
+      background: linear-gradient(145deg, #281e19 0%, #49301f 100%);
+      font-size: 0.88rem;
+    }
+
+    .footer-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 26px 42px;
+    }
+
+    .footer-consents {
+      display: grid;
+      gap: 12px;
+    }
+
+    .legal-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      max-width: 760px;
+    }
+
+    .legal-check input {
+      width: 19px;
+      height: 19px;
+      flex: 0 0 auto;
+      margin: 2px 0 0;
+      accent-color: #c79258;
+    }
+
+    .legal-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px 18px;
+      max-width: 420px;
+    }
+
+    .legal-link,
+    .legal-links button {
+      min-height: 44px;
+      padding: 0;
+      border: 0;
+      color: #f4dfc7;
+      background: none;
+      font: inherit;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      cursor: pointer;
+    }
+
+    .legal-link:hover,
+    .legal-links button:hover { color: #fff; }
+
+    .copyright { grid-column: 1 / -1; margin: 0; color: #cdb8a1; }
+
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 22px;
+      background: rgba(28, 20, 16, 0.68);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal.is-open { display: grid; }
+
+    .dialog {
+      position: relative;
+      width: min(760px, 100%);
+      max-height: min(82vh, 780px);
+      overflow: auto;
+      padding: clamp(28px, 5vw, 52px);
+      border: 1px solid var(--line-strong);
+      border-radius: 26px;
+      background: #fffaf3;
+      box-shadow: 0 30px 90px rgba(21, 14, 11, 0.34);
+    }
+
+    .dialog h2 {
+      padding-right: 48px;
+      color: var(--heading-brown);
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 1.02;
+    }
+
+    .dialog p { color: var(--coffee); }
+
+    .dialog a { color: #6c3d20; font-weight: 700; }
+
+    .close-modal {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      color: var(--espresso);
+      background: #f6e8d6;
+      cursor: pointer;
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-copy { max-width: 760px; }
+      .portrait { width: min(560px, 88%); min-height: 660px; margin-inline: auto; }
+      .pain-grid { grid-template-columns: 1fr; }
+      .method-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      body { font-size: 16px; }
+      .shell { width: min(100% - 28px, 680px); }
+      .nav { min-height: 64px; }
+      .nav-links a:not(.button) { display: none; }
+      .nav-links .button { min-height: 44px; padding: 9px 14px; }
+      .hero { min-height: auto; padding-block: 46px 74px; }
+      h1 { font-size: clamp(2.8rem, 14vw, 4.5rem); }
+      .portrait { width: 100%; min-height: 520px; }
+      .portrait img { min-height: 0; }
+      .portrait-caption { right: 12px; bottom: 22px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .service-card { min-height: auto; }
+      .footer-row { grid-template-columns: 1fr; }
+      .legal-links { justify-content: flex-start; }
+      .copyright { grid-column: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержанию</a>
+
+  <header class="site-header">
+    <nav class="nav shell" aria-label="Основная навигация">
+      <a class="brand" href="#main" aria-label="Ирина — на главную">Ирина<span>.</span></a>
+      <div class="nav-links">
+        <a href="../">Обо мне</a>
+        <a href="#services">Решения</a>
+        <a href="#method">Как работаем</a>
+        <a class="button button--soft" href="#contact">Обсудить задачу</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <div class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow">Сайты · AI · автоматизация</p>
+        <h1>Спокойный рост бизнеса — <em>без потерянных заявок и ручной рутины.</em></h1>
+        <p class="hero-lead">Создаю цифровые решения, которые помогают продавать, быстрее отвечать клиентам и освобождать время команды — без раздувания штата.</p>
+        <ul class="hero-list" aria-label="Основные направления">
+          <li>Сайты и лендинги</li>
+          <li>AI-ассистенты</li>
+          <li>Чат-боты</li>
+          <li>Рабочие процессы</li>
+        </ul>
+        <div class="hero-actions">
+          <a class="button button--primary" href="#contact">Разобрать мою задачу <span aria-hidden="true">→</span></a>
+          <a class="button button--soft" href="#services">Посмотреть решения</a>
+        </div>
+        <p class="hero-note">Начнём с одного понятного процесса и измеримого результата.</p>
+      </div>
+
+      <figure class="portrait">
+        <img src="assets/irina-portrait.webp" width="1120" height="1400" alt="Ирина за рабочим столом в современном офисе">
+        <figcaption class="portrait-caption">Лично веду задачу: от смысла и логики до запуска.</figcaption>
+      </figure>
+    </div>
+
+    <section class="pain-section" id="pain-selector">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">От проблемы — к решению</p>
+          <h2>Что в вашем бизнесе сейчас отнимает время и деньги?</h2>
+          <p>Выберите главную ситуацию — покажу, с какого решения разумно начать.</p>
+        </div>
+        <div class="pain-grid">
+          <div class="pain-buttons" aria-label="Выбор бизнес-проблемы">
+            <button class="pain-button" type="button" data-pain="leads" aria-pressed="true">Заявки теряются или обрабатываются медленно</button>
+            <button class="pain-button" type="button" data-pain="site" aria-pressed="false">Сайт устарел или не приводит клиентов</button>
+            <button class="pain-button" type="button" data-pain="routine" aria-pressed="false">Команда тратит часы на повторяющиеся действия</button>
+            <button class="pain-button" type="button" data-pain="start" aria-pressed="false">Есть идея, но непонятно, с чего начать</button>
+          </div>
+          <div class="recommendation" aria-live="polite">
+            <small>Рекомендация</small>
+            <h3 id="pain-title">AI-ассистент или бот для первого ответа</h3>
+            <p id="pain-text">Соберёт обращение, задаст нужные вопросы и передаст вам структурированную заявку — круглосуточно и без ожидания.</p>
+            <a class="button" href="#contact">Обсудить это решение</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">Решения под задачу</p>
+          <h2>Не набор технологий, а рабочий инструмент для бизнеса.</h2>
+        </div>
+        <div class="services-grid">
+          <article class="service-card">
+            <span>01</span>
+            <h3>Сайт или лендинг</h3>
+            <p>Понятно объясняет ценность, снимает сомнения и ведёт посетителя к целевому действию.</p>
+          </article>
+          <article class="service-card">
+            <span>02</span>
+            <h3>AI-ассистент</h3>
+            <p>Работает с информацией компании, помогает клиентам и разгружает специалиста.</p>
+          </article>
+          <article class="service-card">
+            <span>03</span>
+            <h3>Чат-бот</h3>
+            <p>Отвечает, квалифицирует обращения, записывает и передаёт данные в нужный канал.</p>
+          </article>
+          <article class="service-card">
+            <span>04</span>
+            <h3>Автоматизация</h3>
+            <p>Связывает повторяющиеся действия в один управляемый процесс с понятным контролем.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="method" id="method">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">Без лишней сложности</p>
+          <h2>Описали. Увидели. Поправили. Готово.</h2>
+        </div>
+        <div class="method-grid">
+          <article class="method-card">
+            <strong>01</strong>
+            <h3>Разбираю задачу</h3>
+            <p>Фиксируем проблему, цель, ограничения и результат, который можно проверить.</p>
+          </article>
+          <article class="method-card">
+            <strong>02</strong>
+            <h3>Показываю решение</h3>
+            <p>Вы видите наглядный рабочий вариант, а не длинные технические объяснения.</p>
+          </article>
+          <article class="method-card">
+            <strong>03</strong>
+            <h3>Довожу до запуска</h3>
+            <p>Вношу точечные правки, проверяю работу и передаю понятный результат.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="shell">
+        <div class="contact-box">
+          <p class="eyebrow">Первый шаг</p>
+          <h2>Расскажите, где бизнес теряет заявки, время или деньги.</h2>
+          <p>Я задам несколько точных вопросов и предложу реалистичный первый этап — без навязывания лишнего.</p>
+          <div class="contact-actions">
+            <a class="button button--primary" href="https://wa.me/79127630299" target="_blank" rel="noopener noreferrer">Написать в WhatsApp</a>
+            <a class="button button--soft" href="https://t.me/XgWydWim95I4ZDEy" target="_blank" rel="noopener noreferrer">Telegram</a>
+            <a class="button button--soft" href="https://max.ru/u/f9LHodD0cOLam7rHWCiFmnHQAslcCxm8ibT0nnoDO153oOt2m2lwgbKu2dY" target="_blank" rel="noopener noreferrer">MAX</a>
+            <a class="button button--soft" href="mailto:20.13.25.iki@gmail.com">Email</a>
+          </div>
+          <p class="contact-caption">Открывается выбранный вами канал связи. На сайте данные не собираются.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-row shell">
+      <div class="footer-consents" aria-label="Согласия и правовая информация">
+        <div class="legal-check">
+          <input type="checkbox" id="legal-consent">
+          <span><label for="legal-consent">Я ознакомлен(а) с документами:</label> <button class="legal-link" type="button" data-modal="privacy-modal">Политика обработки персональных данных</button> и <button class="legal-link" type="button" data-modal="consent-modal">согласие на обработку данных</button>.</span>
+        </div>
+        <div class="legal-check">
+          <input type="checkbox" id="legal-awareness">
+          <span><label for="legal-awareness">Я понимаю, что описание услуг носит информационный характер.</label> <button class="legal-link" type="button" data-modal="offer-modal">Информация об оферте</button>.</span>
+        </div>
+      </div>
+      <div class="legal-links" aria-label="Юридические документы">
+        <button type="button" data-modal="privacy-modal">Политика обработки данных</button>
+        <button type="button" data-modal="consent-modal">Согласие на обработку данных</button>
+        <button type="button" data-modal="offer-modal">Информация об оферте</button>
+        <a class="legal-link" href="https://base.garant.ru/12148567/" target="_blank" rel="noopener noreferrer">Федеральный закон № 152-ФЗ</a>
+      </div>
+      <p class="copyright">© <span id="year">2026</span> Ирина — сайты, AI и автоматизация</p>
+    </div>
+  </footer>
+
+  <div class="modal" id="privacy-modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title" aria-hidden="true">
+    <div class="dialog">
+      <button class="close-modal" type="button" aria-label="Закрыть">×</button>
+      <h2 id="privacy-title">Политика обработки персональных данных</h2>
+      <p><strong>Оператор:</strong> ООО «Чистая вода-ПФО», ИНН 1831136725, ОГРН 1091831004990. Адрес: Удмуртская Республика, г. Ижевск, ул. Красная, д. 156, кв. 59.</p>
+      <p>Текущая версия лендинга не содержит формы и не сохраняет персональные данные в собственной базе. При выборе WhatsApp, Telegram, MAX или электронной почты посетитель переходит во внешний сервис и самостоятельно решает, какие сведения сообщить для ответа на обращение.</p>
+      <p>Цель возможной обработки полученных обращений — ответить посетителю, уточнить задачу и обсудить возможное оказание услуг. Для первичного ответа могут использоваться имя, выбранный способ связи и сведения о задаче, добровольно переданные самим посетителем.</p>
+      <p>Отозвать согласие или задать вопрос об обработке данных можно по адресу <a href="mailto:20.13.25.iki@gmail.com">20.13.25.iki@gmail.com</a>. Не передавайте пароли, платёжные сведения, медицинские данные и другую информацию, не требующуюся для первичной консультации.</p>
+      <p>Правовая основа: <a href="https://base.garant.ru/12148567/" target="_blank" rel="noopener noreferrer">Федеральный закон от 27.07.2006 № 152-ФЗ «О персональных данных»</a>.</p>
+    </div>
+  </div>
+
+  <div class="modal" id="consent-modal" role="dialog" aria-modal="true" aria-labelledby="consent-title" aria-hidden="true">
+    <div class="dialog">
+      <button class="close-modal" type="button" aria-label="Закрыть">×</button>
+      <h2 id="consent-title">Согласие на обработку персональных данных</h2>
+      <p>Передавая Ирине сведения через выбранный мессенджер или электронную почту, посетитель свободно, своей волей и в своём интересе соглашается на обработку предоставленных им данных в объёме, необходимом для ответа на обращение и обсуждения задачи.</p>
+      <p>Обработка может включать получение, систематизацию, хранение на время деловой переписки, использование для ответа и удаление. Согласие действует до достижения цели обращения либо до его отзыва по адресу <a href="mailto:20.13.25.iki@gmail.com">20.13.25.iki@gmail.com</a>, если иной срок хранения не требуется по закону или договору.</p>
+      <p>Переход в WhatsApp, Telegram или MAX означает также использование соответствующего внешнего сервиса на его условиях. Перед отправкой сообщения посетителю следует ознакомиться с правилами выбранного сервиса.</p>
+    </div>
+  </div>
+
+  <div class="modal" id="offer-modal" role="dialog" aria-modal="true" aria-labelledby="offer-title" aria-hidden="true">
+    <div class="dialog">
+      <button class="close-modal" type="button" aria-label="Закрыть">×</button>
+      <h2 id="offer-title">Информация не является публичной офертой</h2>
+      <p>Описание услуг и решений на сайте носит информационный характер. Состав работ, сроки, стоимость и ожидаемый результат определяются после обсуждения конкретной задачи и закрепляются в отдельном договоре или соглашении.</p>
+    </div>
+  </div>
+
+  <script>
+    const recommendations = {
+      leads: {
+        title: 'AI-ассистент или бот для первого ответа',
+        text: 'Соберёт обращение, задаст нужные вопросы и передаст вам структурированную заявку — круглосуточно и без ожидания.'
+      },
+      site: {
+        title: 'Новый лендинг с понятным маршрутом клиента',
+        text: 'Покажет ценность вашего предложения, ответит на главные сомнения и приведёт к одному ясному действию.'
+      },
+      routine: {
+        title: 'Автоматизация одного повторяющегося процесса',
+        text: 'Начнём с участка, который забирает больше всего времени: опишем логику, уберём ручные шаги и измерим эффект.'
+      },
+      start: {
+        title: 'Короткая диагностика и прототип решения',
+        text: 'Разложим идею на задачу, приоритеты и первый рабочий этап, чтобы не переплачивать за ненужные функции.'
+      }
+    };
+
+    const buttons = document.querySelectorAll('[data-pain]');
+    const title = document.querySelector('#pain-title');
+    const text = document.querySelector('#pain-text');
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        buttons.forEach((item) => item.setAttribute('aria-pressed', 'false'));
+        button.setAttribute('aria-pressed', 'true');
+        const selected = recommendations[button.dataset.pain];
+        title.textContent = selected.title;
+        text.textContent = selected.text;
+      });
+    });
+
+    const modalTriggers = document.querySelectorAll('[data-modal]');
+    const modals = document.querySelectorAll('.modal');
+    let lastFocusedElement = null;
+
+    const closeModal = (modal) => {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      if (lastFocusedElement) lastFocusedElement.focus();
+    };
+
+    modalTriggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const modal = document.getElementById(trigger.dataset.modal);
+        if (!modal) return;
+        lastFocusedElement = trigger;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        modal.querySelector('.close-modal').focus();
+      });
+    });
+
+    modals.forEach((modal) => {
+      modal.querySelector('.close-modal').addEventListener('click', () => closeModal(modal));
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal(modal);
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const openModal = document.querySelector('.modal.is-open');
+      if (openModal) closeModal(openModal);
+    });
+
+    document.querySelector('#year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

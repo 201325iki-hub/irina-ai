@@ -13,7 +13,7 @@ const required = [
   '<a href="#about">Обо мне</a>',
   '<a class="mini-cta" href="#contact">Обсудить задачу</a>',
   'href="#contact">Разобрать мою задачу',
-  'href="#services">Посмотреть решения</a>',
+  'href="solutions/">Посмотреть решения</a>',
   'id="services"',
   'id="about"',
   'id="contact"',
