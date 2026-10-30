@@ -15,16 +15,19 @@ try {
       await page.locator(`[data-go="${index + 1}"]`).click();
       await page.evaluate(() => new Promise(requestAnimationFrame));
 
-      const report = await page.evaluate((current) => {
+      const report = await page.evaluate(() => {
         const pagesBox = document.querySelector('.pages').getBoundingClientRect();
-        const section = document.querySelector(`[data-note-section="${current + 1}"]`);
-        const textBoxes = [...section.querySelectorAll('h3,p,li,.step,.note-card')]
-          .map((element) => element.getBoundingClientRect());
+        const visibleSections = [...document.querySelectorAll('[data-note-section]')]
+          .filter((section) => Number.parseFloat(getComputedStyle(section).opacity) > 0.05);
+        const textBoxes = visibleSections.flatMap((section) =>
+          [...section.querySelectorAll('h3,p,li,.step,.note-card')].map((element) => element.getBoundingClientRect()));
         return {
           documentOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-          clipped: textBoxes.some((box) => box.left < pagesBox.left - 0.5 || box.right > pagesBox.right + 0.5),
+          clipped: textBoxes.some((box) =>
+            box.left < pagesBox.left - 0.5 || box.right > pagesBox.right + 0.5 ||
+            box.top < pagesBox.top - 0.5 || box.bottom > pagesBox.bottom + 0.5),
         };
-      }, index);
+      });
 
       if (report.documentOverflow > 1 || report.clipped) {
         throw new Error(`Страница блокнота ${index + 1} обрезается при ширине ${width}px: ${JSON.stringify(report)}`);
