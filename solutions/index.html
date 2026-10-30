@@ -500,11 +500,11 @@
     }
 
     .legal-links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: center;
       gap: 10px 18px;
-      max-width: 420px;
+      width: min(100%, 520px);
     }
 
     .legal-link,
@@ -515,6 +515,8 @@
       color: #f4dfc7;
       background: none;
       font: inherit;
+      display: inline-flex;
+      align-items: center;
       text-decoration: underline;
       text-underline-offset: 4px;
       cursor: pointer;
@@ -600,8 +602,29 @@
       .services-grid { grid-template-columns: 1fr; }
       .service-card { min-height: auto; }
       .footer-row { grid-template-columns: 1fr; }
-      .legal-links { justify-content: flex-start; }
+      .legal-links { grid-template-columns: 1fr; }
       .copyright { grid-column: 1; }
+    }
+
+    @media print {
+      html, body { background: #fff !important; }
+      body { color: #2c211c; }
+      .site-header {
+        position: static;
+        background: #fff !important;
+        backdrop-filter: none;
+        box-shadow: none;
+      }
+      .pain-section,
+      .method { background: #f3eadc !important; }
+      .portrait,
+      .hero-list li,
+      .pain-button,
+      .service-card,
+      .method-card,
+      .contact-box { background: #fff !important; }
+      .recommendation,
+      footer { background: #35251c !important; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -768,8 +791,8 @@
       <div class="legal-links" aria-label="Юридические документы">
         <button type="button" data-modal="privacy-modal">Политика обработки данных</button>
         <button type="button" data-modal="consent-modal">Согласие на обработку данных</button>
-        <button type="button" data-modal="offer-modal">Информация об оферте</button>
-        <a class="legal-link" href="https://base.garant.ru/12148567/" target="_blank" rel="noopener noreferrer">Федеральный закон № 152-ФЗ</a>
+        <button class="legal-offer" type="button" data-modal="offer-modal">Информация об оферте</button>
+        <a class="legal-link legal-law" href="https://base.garant.ru/12148567/" target="_blank" rel="noopener noreferrer">Федеральный закон № 152-ФЗ</a>
       </div>
       <p class="copyright">© <span id="year">2026</span> Ирина — сайты, AI и автоматизация</p>
     </div>
