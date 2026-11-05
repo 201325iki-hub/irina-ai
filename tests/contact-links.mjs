@@ -9,7 +9,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   await page.setContent(html, { waitUntil: 'domcontentloaded' });
-  const whatsapp = page.locator('#contact .social-row a[aria-label="WhatsApp"]');
+  const whatsapp = page.locator('#contact .contact-icons a[aria-label="WhatsApp"]');
   if (await whatsapp.count() !== 1) {
     throw new Error('В разделе «Что в вашем бизнесе отнимает время?» нет одной ссылки WhatsApp');
   }
@@ -20,7 +20,7 @@ try {
     throw new Error('Ссылка WhatsApp должна безопасно открываться в новой вкладке');
   }
   const expectedMax = 'https://max.ru/u/f9LHodD0cOLam7rHWCiFmnHQAslcCxm8ibT0nnoDO153oOt2m2lwgbKu2dY';
-  const contactMax = page.locator('#contact .social-row a[aria-label="MAX"]');
+  const contactMax = page.locator('#contact .contact-icons a[aria-label="MAX"]');
   const footerMax = page.locator('footer a.footer-icon[aria-label="MAX"]');
   if (await contactMax.count() !== 1 || await footerMax.count() !== 1) {
     throw new Error('MAX должен присутствовать по одному разу в разделе контактов и подвале');
@@ -43,7 +43,7 @@ try {
         const box = element.getBoundingClientRect();
         return `${element.tagName}.${element.className}[${box.left},${box.right},${box.width}]`;
       }),
-    keyRects: ['body', '.hero .wrap', '.hero-grid', '#contact .wrap', '#contact .social-row']
+    keyRects: ['body', '.hero .wrap', '.hero-grid', '#contact .wrap', '#contact .contact-icons']
       .map((selector) => {
         const element = document.querySelector(selector);
         const box = element?.getBoundingClientRect();

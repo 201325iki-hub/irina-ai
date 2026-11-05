@@ -5,20 +5,19 @@ const required = [
   '<em>Продавайте больше.</em>',
   '<span>Не теряйте заявки.</span>',
   '<span>Не тратьте время на рутину.</span>',
-  '<li><strong>сайты</strong></li>',
-  '<li><strong>AI-ассистентов</strong></li>',
-  '<li><strong>Автоматизирую рабочие процессы</strong></li>',
-  '<img src="irina-ai.jpg"',
+  'data:image/webp;base64,',
   '<a href="#services">Чем помогу</a>',
   '<a href="#about">Обо мне</a>',
   '<a class="mini-cta" href="#contact">Обсудить задачу</a>',
   'href="#contact">Разобрать мою задачу',
-  'href="solutions/">Посмотреть решения</a>',
+  'href="https://201325iki-hub.github.io/irina-ai/solutions/">Посмотреть решения</a>',
   'id="services"',
   'id="about"',
   'id="contact"',
-  '113843787',
   'https://wa.me/79127630299',
+  'data-language="ru"',
+  'data-language="en"',
+  'data-language="it"',
 ];
 
 for (const fragment of required) {
@@ -31,7 +30,6 @@ const order = [
   'Не теряйте заявки.',
   'Не тратьте время на рутину.',
   'Создаю понятные цифровые решения',
-  '<ul class="hero-list">',
   'Разобрать мою задачу',
 ];
 let previous = -1;
