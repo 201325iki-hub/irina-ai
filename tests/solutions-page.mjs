@@ -16,7 +16,9 @@ const requiredLanding = [
   'data-language="ru"',
   'data-language="en"',
   'data-language="it"',
-  'href="#email-modal"',
+  'id="channel-modal"',
+  'id="choose-channel"',
+  'data-channel="email"',
   'id="reviews"',
 ];
 for (const fragment of requiredLanding) {

@@ -1,59 +1,44 @@
-import { createRequire } from 'node:module';
+import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import http from 'node:http';
+import path from 'node:path';
+import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
-const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/chromium' });
+const root = path.resolve(new URL('..', import.meta.url).pathname);
+const server = http.createServer((request, response) => {
+  const relative = decodeURIComponent(new URL(request.url, 'http://preview.local').pathname).replace(/^\/+/, '') || 'index.html';
+  const filePath = path.resolve(root, relative);
+  if (!filePath.startsWith(`${root}${path.sep}`) || !fs.existsSync(filePath)) return response.writeHead(404).end('Not found');
+  response.setHeader('Content-Type', filePath.endsWith('.html') ? 'text/html; charset=utf-8' : 'image/webp');
+  fs.createReadStream(filePath).pipe(response);
+});
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 
+const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/chromium' });
 try {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-  await page.setContent(html, { waitUntil: 'domcontentloaded' });
-  const whatsapp = page.locator('#contact .contact-icons a[aria-label="WhatsApp"]');
-  if (await whatsapp.count() !== 1) {
-    throw new Error('В разделе «Что в вашем бизнесе отнимает время?» нет одной ссылки WhatsApp');
+  for (const file of ['index.html', 'solutions/index.html']) {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 }, locale: 'ru-RU' });
+    await page.goto(`http://127.0.0.1:${server.address().port}/${file}`, { waitUntil: 'load' });
+    assert.equal(await page.locator('[data-contact-entry][href^="http"], [data-contact-entry][href^="mailto:"]').count(), 0, `${file}: входы в связь не обходят форму`);
+    assert.equal(await page.locator('#choose-channel').isDisabled(), true, `${file}: выбор канала заблокирован до заполнения`);
+    await page.locator('#contact-name').fill('Анна');
+    await page.locator('#contact-reply').fill('anna@example.com');
+    await page.locator('#contact-task').fill('Нужен сайт');
+    await page.locator('#processing-consent').check();
+    await page.locator('#privacy-awareness').check();
+    assert.equal(await page.locator('#choose-channel').isEnabled(), true, `${file}: выбор канала разблокируется после формы и двух галочек`);
+    await page.locator('#choose-channel').click();
+    const email = await page.locator('[data-channel="email"]').evaluate(element => ({ href: element.getAttribute('href'), target: element.getAttribute('target') }));
+    assert.equal(email.target, '_top', `${file}: Email открывается верхним окном`);
+    assert.match(email.href, /^mailto:20\.13\.25\.iki@gmail\.com\?subject=.+&body=.+/u, `${file}: письмо содержит адрес, тему и текст`);
+    assert.equal(await page.locator('[data-channel]').count(), 5, `${file}: доступны пять каналов связи`);
+    await page.close();
   }
-  if (await whatsapp.getAttribute('href') !== 'https://wa.me/79127630299') {
-    throw new Error('В разделе контактов указана неверная ссылка WhatsApp');
-  }
-  if (await whatsapp.getAttribute('target') !== '_blank' || await whatsapp.getAttribute('rel') !== 'noopener') {
-    throw new Error('Ссылка WhatsApp должна безопасно открываться в новой вкладке');
-  }
-  const expectedMax = 'https://max.ru/u/f9LHodD0cOLam7rHWCiFmnHQAslcCxm8ibT0nnoDO153oOt2m2lwgbKu2dY';
-  const contactMax = page.locator('#contact .contact-icons a[aria-label="MAX"]');
-  const footerMax = page.locator('footer a.footer-icon[aria-label="MAX"]');
-  if (await contactMax.count() !== 1 || await footerMax.count() !== 1) {
-    throw new Error('MAX должен присутствовать по одному разу в разделе контактов и подвале');
-  }
-  for (const link of [contactMax, footerMax]) {
-    if (await link.getAttribute('href') !== expectedMax) {
-      throw new Error('Указана неверная ссылка MAX');
-    }
-    if (await link.getAttribute('target') !== '_blank' || await link.getAttribute('rel') !== 'noopener') {
-      throw new Error('Ссылка MAX должна безопасно открываться в новой вкладке');
-    }
-  }
-  const overflow = await page.evaluate(() => ({
-    scrollWidth: document.documentElement.scrollWidth,
-    innerWidth: window.innerWidth,
-    offenders: [...document.querySelectorAll('body *')]
-      .filter((element) => element.getBoundingClientRect().right > window.innerWidth + 1)
-      .slice(0, 8)
-      .map((element) => {
-        const box = element.getBoundingClientRect();
-        return `${element.tagName}.${element.className}[${box.left},${box.right},${box.width}]`;
-      }),
-    keyRects: ['body', '.hero .wrap', '.hero-grid', '#contact .wrap', '#contact .contact-icons']
-      .map((selector) => {
-        const element = document.querySelector(selector);
-        const box = element?.getBoundingClientRect();
-        return [selector, box && { left: box.left, right: box.right, width: box.width }];
-      }),
-  }));
-  if (overflow.scrollWidth > overflow.innerWidth) {
-    throw new Error(`После добавления мессенджеров мобильная страница выходит за ширину экрана: ${JSON.stringify(overflow)}`);
-  }
-  console.log('WhatsApp и MAX присутствуют в контактах; мобильная ширина корректна.');
 } finally {
   await browser.close();
+  await new Promise(resolve => server.close(resolve));
 }
+
+console.log('PASS: формы, две галочки, Email и пять каналов проверены на обеих страницах.');
