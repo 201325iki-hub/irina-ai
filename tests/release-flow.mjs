@@ -7,12 +7,13 @@ const require = createRequire(import.meta.url);
 const { chromium } = require('/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const root = path.resolve(new URL('..', import.meta.url).pathname);
 const publicBase = 'https://201325iki-hub.github.io/irina-ai';
+const useLiveSite = process.env.LIVE === '1';
 
 const browser = await chromium.launch({ headless: true, executablePath: '/usr/bin/chromium' });
 const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'ru-RU' });
 const page = await context.newPage();
 
-await page.route(`${publicBase}/**`, async route => {
+if (!useLiveSite) await page.route(`${publicBase}/**`, async route => {
   const requestUrl = new URL(route.request().url());
   const relative = requestUrl.pathname.replace(/^\/irina-ai\/?/u, '') || 'index.html';
   const candidate = relative.endsWith('/') ? `${relative}index.html` : relative;
@@ -112,4 +113,4 @@ try {
   await browser.close();
 }
 
-console.log('PASS release flow: card → landing interactions → card, RU/EN/IT, forms and responsive widths');
+console.log(`PASS ${useLiveSite ? 'live' : 'candidate'} release flow: card → landing interactions → card, RU/EN/IT, forms and responsive widths`);
