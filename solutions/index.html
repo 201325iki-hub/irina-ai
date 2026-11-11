@@ -1220,5 +1220,74 @@
     applyLanguage(['ru','en','it'].includes(requested)?requested:(['ru','en','it'].includes(saved)?saved:(browser.startsWith('it')?'it':browser.startsWith('ru')?'ru':'en')));
   })();
   </script>
+
+<script>
+/* Yandex Metrica 114152125. Load only after affirmative consent. */
+(function () {
+  'use strict';
+  const ID = 114152125;
+  const KEY = 'irina-metrica-consent-v1';
+  let choice = null, started = false;
+  try { choice = localStorage.getItem(KEY); } catch (_) {}
+  const translations = {
+    ru: ['Аналитика сайта', 'Разрешить Яндекс Метрику для анализа посещений? До согласия она не загружается. Отказ не ограничивает работу сайта.', 'Разрешить', 'Не разрешать', 'Настройки аналитики', 'Аналитика разрешена. Вы можете изменить выбор.', 'Аналитика отключена. Вы можете изменить выбор.'],
+    en: ['Website analytics', 'Allow Yandex Metrica to analyse site visits? It will not load before consent. Declining does not restrict this website.', 'Allow', 'Decline', 'Analytics settings', 'Analytics enabled. You can change your choice.', 'Analytics disabled. You can change your choice.'],
+    it: ['Analisi del sito', 'Consenti a Yandex Metrica di analizzare le visite? Non viene caricato prima del consenso. Rifiutare non limita il sito.', 'Consenti', 'Rifiuta', 'Impostazioni analitiche', 'Analisi attiva. Puoi modificare la scelta.', 'Analisi disattivata. Puoi modificare la scelta.']
+  };
+  function labels() { return translations[(document.documentElement.lang || 'ru').slice(0,2)] || translations.ru; }
+  function start() {
+    if (started || choice !== 'yes') return;
+    started = true;
+    window.ym = window.ym || function () { (window.ym.a = window.ym.a || []).push(arguments); };
+    window.ym.l = window.ym.l || Date.now();
+    window.ym(ID, 'init', {
+      clickmap: false, trackLinks: true, accurateTrackBounce: true,
+      webvisor: false, ecommerce: false
+    });
+    const tag = document.createElement('script');
+    tag.async = true;
+    tag.src = 'https://mc.yandex.ru/metrika/tag.js';
+    document.head.appendChild(tag);
+  }
+  function main() {
+    const style = document.createElement('style');
+    style.textContent = '#iki-metrika-controls{position:fixed;bottom:10px;left:10px;z-index:9990;font-family:Arial,sans-serif;color:#2a242c}#iki-metrika-controls button{cursor:pointer;font:inherit}#iki-metrika-settings{background:#fff;color:#2a242c;border:1px solid #999;border-radius:18px;padding:7px 12px;font-size:12px;box-shadow:0 3px 12px #0002}#iki-metrika-panel{position:absolute;bottom:42px;left:0;width:min(380px,calc(100vw - 20px));box-sizing:border-box;background:#fff;color:#2a242c;padding:16px;border:1px solid #bbb;border-radius:12px;box-shadow:0 8px 30px #0004}#iki-metrika-panel[hidden]{display:none}#iki-metrika-panel h2{font-size:17px;margin:0 0 8px;color:#2a242c}#iki-metrika-panel p{font-size:13px;line-height:1.5;margin:0 0 12px;color:#2a242c}#iki-metrika-choices{display:flex;gap:8px;flex-wrap:wrap}#iki-metrika-choices button{font-size:13px;border:1px solid #555;border-radius:8px;background:white;color:#2a242c;padding:9px 12px}#iki-metrika-choices button:first-child{background:#33273b;color:#fff}';
+    document.head.appendChild(style);
+    const root = document.createElement('div');
+    root.id = 'iki-metrika-controls';
+    root.innerHTML = '<button id="iki-metrika-settings" type="button"></button><section id="iki-metrika-panel" role="region" aria-labelledby="iki-metrika-heading"><h2 id="iki-metrika-heading"></h2><p id="iki-metrika-explain"></p><div id="iki-metrika-choices"><button type="button" id="iki-metrika-accept"></button><button type="button" id="iki-metrika-reject"></button></div></section>';
+    document.body.appendChild(root);
+    const panel = root.querySelector('#iki-metrika-panel');
+    function render() {
+      const t = labels();
+      root.querySelector('#iki-metrika-settings').textContent = t[4];
+      root.querySelector('#iki-metrika-heading').textContent = t[0];
+      root.querySelector('#iki-metrika-explain').textContent = choice === null ? t[1] : choice === 'yes' ? t[5] : t[6];
+      root.querySelector('#iki-metrika-accept').textContent = t[2];
+      root.querySelector('#iki-metrika-reject').textContent = t[3];
+    }
+    function select(value) {
+      choice = value;
+      try { localStorage.setItem(KEY, value); } catch (_) {}
+      panel.hidden = true;
+      if (value === 'yes') start();
+      // Once loaded, a revoked session cannot erase already sent data.
+      // Reload the document to stop subsequent analytics calls.
+      if (value !== 'yes' && started) location.reload();
+    }
+    root.querySelector('#iki-metrika-settings').addEventListener('click', function() {
+      render(); panel.hidden = !panel.hidden;
+    });
+    root.querySelector('#iki-metrika-accept').addEventListener('click', () => select('yes'));
+    root.querySelector('#iki-metrika-reject').addEventListener('click', () => select('no'));
+    document.addEventListener('irina-language-change', render);
+    render();
+    panel.hidden = choice !== null;
+    if (choice === 'yes') start();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', main, { once: true });
+  else main();
+})();
+</script>
 </body>
 </html>
