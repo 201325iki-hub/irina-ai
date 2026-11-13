@@ -15,6 +15,8 @@
       --parchment: #f3e8d7;
       --paper: #fbf7f0;
       --espresso: #2c211c;
+      --luxury-dark: linear-gradient(112deg, #2b211d 0%, #4e3329 22%, #795136 43%, #a47a50 55%, #67432f 75%, #2f231f 100%);
+      --luxury-action: linear-gradient(112deg, #5a382a 0%, #8e5d3e 25%, #c6a070 48%, #aa7a4e 65%, #6c4431 100%);
       --coffee: #55463e;
       --brass: #a47a45;
       --brass-dark: #76522f;
@@ -95,17 +97,17 @@
       z-index: 50;
       top: 0;
       border-bottom: 1px solid rgba(255, 250, 242, 0.24);
-      background: linear-gradient(115deg, #2c211c 0%, #4a3225 52%, #8b6342 100%);
-      background-size: 220% 220%;
-      animation: luxuryGradientShift 28s ease-in-out infinite alternate;
+      background: var(--luxury-dark);
+      background-size: 190% 190%;
+      animation: luxuryGradientShift 36s ease-in-out infinite alternate;
       backdrop-filter: blur(16px);
       box-shadow: 0 10px 34px rgba(44, 33, 28, 0.22);
     }
 
     @keyframes luxuryGradientShift {
       0% { background-position: 0% 50%; }
-      50% { background-position: 72% 38%; }
-      100% { background-position: 100% 58%; }
+      50% { background-position: 48% 50%; }
+      100% { background-position: 100% 50%; }
     }
 
     .nav {
@@ -167,10 +169,13 @@
     .button:hover { transform: translateY(-2px); box-shadow: var(--glow); }
 
     .button--primary {
-      border-color: var(--espresso);
-      background: linear-gradient(135deg, #2c211c 0%, #5b3b27 100%);
+      border-color: #a27a54;
+      background: var(--luxury-action);
+      background-size: 180% 180%;
       color: #fffaf2;
-      box-shadow: 0 14px 34px rgba(44, 33, 28, 0.2);
+      text-shadow: 0 1px 2px rgba(34,21,15,.28);
+      box-shadow: inset 0 1px 0 rgba(255,238,202,.28), 0 14px 34px rgba(44,33,28,.2);
+      transition: background-position 1.5s ease-in-out, box-shadow .65s ease, transform .65s ease;
     }
 
     .button--soft { background: rgba(255, 255, 255, 0.38); }
@@ -341,8 +346,8 @@
     }
 
     .pain-button[aria-pressed="true"] {
-      border-color: var(--espresso);
-      background: var(--espresso);
+      border-color: #a27a54;
+      background: var(--luxury-action);
       color: #fffaf2;
     }
 
@@ -351,9 +356,7 @@
       padding: clamp(26px, 4vw, 48px);
       border-radius: var(--radius);
       border: 1px solid #c39a70;
-      background:
-        radial-gradient(circle at 92% 10%, rgba(212, 161, 104, 0.24), transparent 34%),
-        linear-gradient(145deg, #2b201b 0%, #513523 100%);
+      background: radial-gradient(circle at 90% 12%, rgba(241,208,157,.13), transparent 42%), var(--luxury-dark);
       color: #fffaf2;
       box-shadow: var(--shadow);
     }
@@ -562,7 +565,7 @@
       padding: 44px 0 50px;
       border-top: 1px solid var(--line-strong);
       color: #e8d9c8;
-      background: linear-gradient(145deg, #281e19 0%, #49301f 100%);
+      background: var(--luxury-dark);
       font-size: 0.88rem;
     }
 
@@ -736,7 +739,7 @@
     .language-switcher{display:inline-flex;align-items:center;gap:3px;padding:3px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.08)}
     .language-switcher button{display:grid;place-items:center;min-width:34px;height:30px;padding:0 7px;border:0;border-radius:999px;color:rgba(255,250,242,.78);background:transparent;cursor:pointer;font-size:.72rem;font-weight:850;letter-spacing:.04em}
     .language-switcher button:hover,.language-switcher button:focus-visible{background:rgba(255,255,255,.14)}
-    .language-switcher button[aria-pressed="true"]{color:#fff;background:linear-gradient(135deg,#9a5e36,#5b3826)}
+    .language-switcher button[aria-pressed="true"]{color:#fff;background:var(--luxury-action)}
     @media(max-width:760px){.language-switcher{align-self:flex-end}.language-switcher button{min-width:31px;height:28px;padding:0 5px}}
 
   </style>
@@ -984,7 +987,8 @@
   </div>
 
   <style>
-    .contact-form{max-width:760px;margin:28px auto 0;display:grid;gap:16px;text-align:left}.contact-field{display:grid;gap:7px}.contact-field label,.contact-prepared label{font-weight:800}.contact-field input,.contact-field textarea,.contact-prepared textarea{width:100%;padding:14px 16px;border:1px solid var(--line-strong);border-radius:14px;color:var(--espresso);background:rgba(255,255,255,.78);font:inherit}.contact-field textarea{min-height:130px;resize:vertical}.footer-contact-action{display:grid;gap:12px;margin-top:8px}.footer-contact-action>.button{justify-self:start}.contact-form-status{min-height:24px;margin:0;text-align:left;font-weight:750}.contact-prepared{display:grid;gap:8px}.contact-prepared[hidden]{display:none}.contact-prepared textarea{min-height:180px}.channel-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.channel-options .button{width:100%}.channel-options .channel-email{position:relative;isolation:isolate;overflow:hidden;border:1px solid rgba(236,196,135,.72);background:linear-gradient(115deg,#513325 0%,#895b3f 19%,#d7ae78 39%,#ac7950 56%,#6d4030 78%,#422b26 100%);background-size:185% 185%;background-position:0% 50%;color:#fffaf2;text-shadow:0 1px 2px rgba(45,24,17,.45);box-shadow:inset 0 1px 0 rgba(255,237,193,.38),0 10px 25px rgba(76,45,30,.25),0 0 0 1px rgba(137,83,49,.16);transition:background-position 650ms cubic-bezier(.2,.7,.2,1),box-shadow 350ms ease,transform 350ms ease,border-color 350ms ease}.channel-options .channel-email::after{content:'';position:absolute;inset:-60% auto -60% -80%;width:38%;transform:skewX(-24deg);background:linear-gradient(90deg,transparent,rgba(255,241,199,.3),transparent);pointer-events:none;transition:left 750ms ease;left:-80%;z-index:-1}.channel-options .channel-email:hover,.channel-options .channel-email:focus-visible{background-position:100% 50%;border-color:#f2d4a3;box-shadow:inset 0 1px 0 rgba(255,242,208,.55),0 16px 34px rgba(83,48,29,.3),0 0 18px rgba(198,151,89,.22);transform:translateY(-2px)}.channel-options .channel-email:hover::after,.channel-options .channel-email:focus-visible::after{left:130%}@media(prefers-reduced-motion:reduce){.channel-options .channel-email,.channel-options .channel-email::after{transition:none}}.button:disabled{cursor:not-allowed;filter:grayscale(.35);opacity:.55;transform:none!important}.legal-language-note{grid-column:1/-1;margin:0;color:#f2dfca;font-size:.86rem}@media(max-width:760px){.channel-options{grid-template-columns:1fr}.footer-contact-action>.button{width:100%}}
+    .contact-form{max-width:760px;margin:28px auto 0;display:grid;gap:16px;text-align:left}.contact-field{display:grid;gap:7px}.contact-field label,.contact-prepared label{font-weight:800}.contact-field input,.contact-field textarea,.contact-prepared textarea{width:100%;padding:14px 16px;border:1px solid var(--line-strong);border-radius:14px;color:var(--espresso);background:rgba(255,255,255,.78);font:inherit}.contact-field textarea{min-height:130px;resize:vertical}.footer-contact-action{display:grid;gap:12px;margin-top:8px}.footer-contact-action>.button{justify-self:start}.contact-form-status{min-height:24px;margin:0;text-align:left;font-weight:750}.contact-prepared{display:grid;gap:8px}.contact-prepared[hidden]{display:none}.contact-prepared textarea{min-height:180px}.channel-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.channel-options .button{width:100%}.channel-options .channel-email{position:relative;overflow:hidden;border:1px solid rgba(234,197,141,.7);background:var(--luxury-action);background-size:190% 190%;background-position:25% 50%;color:#fffaf2;text-shadow:0 1px 2px rgba(45,24,17,.3);box-shadow:inset 0 1px 0 rgba(255,237,193,.28),0 9px 23px rgba(76,45,30,.2);transition:background-position 1.8s ease-in-out,box-shadow .8s ease,transform .8s ease,border-color .8s ease}.channel-options .channel-email:hover,.channel-options .channel-email:focus-visible{background-position:75% 50%;border-color:#e6c699;box-shadow:inset 0 1px 0 rgba(255,242,208,.4),0 14px 29px rgba(83,48,29,.24);transform:translateY(-1px)}@media(prefers-reduced-motion:reduce){.site-header{animation:none}.channel-options .channel-email,.button--primary{transition:none}}
+.button:disabled{cursor:not-allowed;filter:grayscale(.35);opacity:.55;transform:none!important}.legal-language-note{grid-column:1/-1;margin:0;color:#f2dfca;font-size:.86rem}@media(max-width:760px){.channel-options{grid-template-columns:1fr}.footer-contact-action>.button{width:100%}}
   </style>
 
   <script>
