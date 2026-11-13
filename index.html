@@ -119,6 +119,15 @@
       vk:'https://vk.ru/id861710891',
       email:'mailto:20.13.25.iki@gmail.com'
     };
+    // Anonymous goal events only after explicit consent to Yandex Metrica.
+    // These are clicks/attempted contact handoffs, never proof of a sent message.
+    const trackContactGoal=(eventName)=>{
+      let consent=null;
+      try { consent=localStorage.getItem('irina-metrica-consent-v1'); } catch (_) {}
+      if(consent!=='yes' || typeof window.ym!=='function')return;
+      const allowed=['contact_form_ready','contact_channel_email','contact_channel_whatsapp','contact_channel_telegram','contact_channel_max','contact_channel_vk','contact_entry'];
+      if(allowed.includes(eventName))window.ym(114152125,'reachGoal',eventName);
+    };
     const COPY={
       ru:{choose:'Выбрать способ отправки',prepared:'Обращение подготовлено. Выберите удобный канал.',manual:'Текст обращения подготовлен ниже. Скопируйте его вручную и вставьте в сообщение.',legal:'Русская версия юридических документов является основной.',title:'Выберите способ отправки',intro:'Вы сами подтвердите отправку во внешнем сервисе. До этого обращение не считается отправленным.',name:'Имя',reply:'Контакт для ответа',task:'Задача',source:'Источник',language:'Язык',time:'Подготовлено',consent:'Согласия подтверждены: обработка персональных данных и ознакомление с политиками.',version:'Версия согласия: 2026-11-05'},
       en:{choose:'Choose how to send',prepared:'Your enquiry is prepared. Choose a convenient channel.',manual:'The enquiry text is shown below. Copy it manually and paste it into your message.',legal:'The Russian version of the legal documents is authoritative.',title:'Choose how to send',intro:'You will confirm sending in the external service. Until then, the enquiry is not considered sent.',name:'Name',reply:'Reply contact',task:'Project',source:'Source',language:'Language',time:'Prepared',consent:'Consents confirmed: personal data processing and acknowledgement of the policies.',version:'Consent version: 2026-11-05'},
@@ -156,13 +165,14 @@
     const updateState=()=>{choose.disabled=!isComplete()};
     [name,reply,task,processing,awareness].forEach(field=>{field.addEventListener('input',updateState);field.addEventListener('change',updateState)});form.addEventListener('submit',event=>{event.preventDefault();openChooser()});
     const buildPreparedMessage=()=>{const language=currentLanguage(),copy=COPY[language];return [`${copy.name}: ${name.value.trim()}`,`${copy.reply}: ${reply.value.trim()}`,`${copy.task}: ${task.value.trim()}`,`${copy.source}: ${location.href}`,`${copy.language}: ${language.toUpperCase()}`,`${copy.time}: ${new Date().toISOString()}`,copy.consent,copy.version].join('\n')};
-    const openChooser=()=>{if(!isComplete()){updateState();return}const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;modal.querySelector('[data-channel="email"]').href=`mailto:20.13.25.iki@gmail.com?${new URLSearchParams({subject:'Запрос с сайта',body:text})}`;preparedWrap.hidden=false;status.textContent=COPY[currentLanguage()].prepared;modal.classList.add('open');modal.setAttribute('aria-hidden','false');modal.querySelector('.close-modal').focus()};
+    const openChooser=()=>{if(!isComplete()){updateState();return}trackContactGoal('contact_form_ready');const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;modal.querySelector('[data-channel="email"]').href=`mailto:20.13.25.iki@gmail.com?${new URLSearchParams({subject:'Запрос с сайта',body:text})}`;preparedWrap.hidden=false;status.textContent=COPY[currentLanguage()].prepared;modal.classList.add('open');modal.setAttribute('aria-hidden','false');modal.querySelector('.close-modal').focus()};
     const closeChooser=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');choose.focus()};
     choose.addEventListener('click',openChooser);modal.querySelector('.close-modal').addEventListener('click',closeChooser);modal.addEventListener('click',event=>{if(event.target===modal)closeChooser()});
     const copyText=async text=>{try{await navigator.clipboard.writeText(text);return true}catch{return false}};
-    const sendPreparedMessage=async channel=>{if(!isComplete())return;const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;preparedWrap.hidden=false;let url=CHANNELS[channel];if(channel==='whatsapp')url+=`?text=${encodeURIComponent(text)}`;if(['telegram','max','vk'].includes(channel)){const copied=await copyText(text);document.getElementById('channel-status').textContent=copied?COPY[currentLanguage()].prepared:COPY[currentLanguage()].manual}window.open(url,'_blank','noopener')};
+    const sendPreparedMessage=async channel=>{if(!isComplete())return;trackContactGoal('contact_channel_'+channel);const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;preparedWrap.hidden=false;let url=CHANNELS[channel];if(channel==='whatsapp')url+=`?text=${encodeURIComponent(text)}`;if(['telegram','max','vk'].includes(channel)){const copied=await copyText(text);document.getElementById('channel-status').textContent=copied?COPY[currentLanguage()].prepared:COPY[currentLanguage()].manual}window.open(url,'_blank','noopener')};
     modal.querySelectorAll('button[data-channel]').forEach(button=>button.addEventListener('click',()=>sendPreparedMessage(button.dataset.channel)));
-    document.querySelectorAll('.social,.contact-icon,.footer-icon,#write-to-me').forEach(entry=>{entry.dataset.contactEntry='';entry.href='#contact';entry.removeAttribute('target');entry.removeAttribute('rel');entry.removeAttribute('data-modal');entry.addEventListener('click',event=>{event.preventDefault();document.getElementById('contact').scrollIntoView({behavior:'smooth'});name.focus({preventScroll:true})})});
+    modal.querySelector('a[data-channel="email"]').addEventListener('click',()=>{if(isComplete())trackContactGoal('contact_channel_email')});
+    document.querySelectorAll('.social,.contact-icon,.footer-icon,#write-to-me').forEach(entry=>{entry.dataset.contactEntry='';entry.href='#contact';entry.removeAttribute('target');entry.removeAttribute('rel');entry.removeAttribute('data-modal');entry.addEventListener('click',event=>{event.preventDefault();trackContactGoal('contact_entry');document.getElementById('contact').scrollIntoView({behavior:'smooth'});name.focus({preventScroll:true})})});
     updateState();
   })();
   </script>
@@ -253,12 +263,29 @@
   }
   function main() {
     const style = document.createElement('style');
-    style.textContent = '#iki-metrika-controls{position:fixed;bottom:10px;left:10px;z-index:9990;font-family:Arial,sans-serif;color:#2a242c}#iki-metrika-controls button{cursor:pointer;font:inherit}#iki-metrika-settings{background:#fff;color:#2a242c;border:1px solid #999;border-radius:18px;padding:7px 12px;font-size:12px;box-shadow:0 3px 12px #0002}#iki-metrika-panel{position:absolute;bottom:42px;left:0;width:min(380px,calc(100vw - 20px));box-sizing:border-box;background:#fff;color:#2a242c;padding:16px;border:1px solid #bbb;border-radius:12px;box-shadow:0 8px 30px #0004}#iki-metrika-panel[hidden]{display:none}#iki-metrika-panel h2{font-size:17px;margin:0 0 8px;color:#2a242c}#iki-metrika-panel p{font-size:13px;line-height:1.5;margin:0 0 12px;color:#2a242c}#iki-metrika-choices{display:flex;gap:8px;flex-wrap:wrap}#iki-metrika-choices button{font-size:13px;border:1px solid #555;border-radius:8px;background:white;color:#2a242c;padding:9px 12px}#iki-metrika-choices button:first-child{background:#33273b;color:#fff}';
+    style.textContent = [
+      '#iki-metrika-controls{font-family:inherit;color:#f4ecf2}',
+      '#iki-metrika-controls button{cursor:pointer;font:inherit}',
+      '#iki-metrika-panel{position:fixed;bottom:0;left:0;right:0;z-index:90;box-sizing:border-box;background:rgba(24,18,30,.97);border-top:1px solid rgba(255,173,209,.28);box-shadow:0 -7px 28px #0003;backdrop-filter:blur(14px);padding:12px 18px calc(12px + env(safe-area-inset-bottom))}',
+      '#iki-metrika-panel[hidden]{display:none}',
+      '#iki-metrika-content{max-width:1160px;margin:auto;display:flex;align-items:center;gap:18px;justify-content:space-between}',
+      '#iki-metrika-copy{min-width:0;flex:1}',
+      '#iki-metrika-panel h2{font-size:14px;letter-spacing:.03em;margin:0 0 3px;color:#ffc0db;font-weight:650}',
+      '#iki-metrika-panel p{font-size:12px;line-height:1.5;margin:0;color:#eadde7}',
+      '#iki-metrika-choices{display:flex;align-items:center;gap:9px;flex-shrink:0}',
+      '#iki-metrika-choices button{font-size:12px;white-space:nowrap;border:1px solid rgba(255,255,255,.27);border-radius:999px;background:transparent;color:#fff;padding:10px 16px}',
+      '#iki-metrika-choices button:first-child{background:#b02b71;border-color:#b02b71;color:white}',
+      '#iki-metrika-choices button:focus-visible,#iki-metrika-settings:focus-visible{outline:2px solid #7fe6ef;outline-offset:3px}',
+      '#iki-metrika-settings{border:0;background:none;color:#e8b4ca;text-decoration:underline;text-underline-offset:3px;padding:4px 0;font-size:12px}',
+      '#iki-metrika-footer{max-width:1160px;margin:0 auto;padding-top:8px}',
+      '@media(max-width:660px){#iki-metrika-content{align-items:stretch;flex-direction:column;gap:10px}#iki-metrika-choices{width:100%;justify-content:flex-start}#iki-metrika-choices button{flex:1;padding:10px 6px}#iki-metrika-panel{padding:12px 14px calc(12px + env(safe-area-inset-bottom))}}'
+    ].join('');
     document.head.appendChild(style);
     const root = document.createElement('div');
     root.id = 'iki-metrika-controls';
-    root.innerHTML = '<button id="iki-metrika-settings" type="button"></button><section id="iki-metrika-panel" role="region" aria-labelledby="iki-metrika-heading"><h2 id="iki-metrika-heading"></h2><p id="iki-metrika-explain"></p><div id="iki-metrika-choices"><button type="button" id="iki-metrika-accept"></button><button type="button" id="iki-metrika-reject"></button></div></section>';
-    document.body.appendChild(root);
+    root.innerHTML = '<section id="iki-metrika-panel" role="region" aria-labelledby="iki-metrika-heading"><div id="iki-metrika-content"><div id="iki-metrika-copy"><h2 id="iki-metrika-heading"></h2><p id="iki-metrika-explain"></p></div><div id="iki-metrika-choices"><button type="button" id="iki-metrika-accept"></button><button type="button" id="iki-metrika-reject"></button></div></div></section><div id="iki-metrika-footer"><button id="iki-metrika-settings" type="button"></button></div>';
+    const footer = document.querySelector('footer');
+    (footer || document.body).appendChild(root);
     const panel = root.querySelector('#iki-metrika-panel');
     function render() {
       const t = labels();
@@ -273,8 +300,6 @@
       try { localStorage.setItem(KEY, value); } catch (_) {}
       panel.hidden = true;
       if (value === 'yes') start();
-      // Once loaded, a revoked session cannot erase already sent data.
-      // Reload the document to stop subsequent analytics calls.
       if (value !== 'yes' && started) location.reload();
     }
     root.querySelector('#iki-metrika-settings').addEventListener('click', function() {
