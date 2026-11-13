@@ -15,8 +15,8 @@
       --parchment: #f3e8d7;
       --paper: #fbf7f0;
       --espresso: #2c211c;
-      --luxury-dark: linear-gradient(112deg, #2b211d 0%, #4e3329 22%, #795136 43%, #a47a50 55%, #67432f 75%, #2f231f 100%);
-      --luxury-action: linear-gradient(112deg, #5a382a 0%, #8e5d3e 25%, #c6a070 48%, #aa7a4e 65%, #6c4431 100%);
+      --luxury-dark: linear-gradient(110deg, #2d211d 0%, #4c3126 16%, #90633f 34%, #c69c65 48%, #855939 65%, #3b2922 83%, #2d211d 100%);
+      --luxury-action: linear-gradient(110deg, #553627 0%, #976742 23%, #d1aa73 45%, #ab7d51 63%, #60402d 83%, #553627 100%);
       --coffee: #55463e;
       --brass: #a47a45;
       --brass-dark: #76522f;
@@ -98,15 +98,14 @@
       top: 0;
       border-bottom: 1px solid rgba(255, 250, 242, 0.24);
       background: var(--luxury-dark);
-      background-size: 190% 190%;
-      animation: luxuryGradientShift 36s ease-in-out infinite alternate;
+      background-size: 260% 100%;
+      animation: luxuryGradientShift 14s ease-in-out infinite alternate;
       backdrop-filter: blur(16px);
       box-shadow: 0 10px 34px rgba(44, 33, 28, 0.22);
     }
 
     @keyframes luxuryGradientShift {
       0% { background-position: 0% 50%; }
-      50% { background-position: 48% 50%; }
       100% { background-position: 100% 50%; }
     }
 
@@ -171,7 +170,8 @@
     .button--primary {
       border-color: #a27a54;
       background: var(--luxury-action);
-      background-size: 180% 180%;
+      background-size: 260% 100%;
+      animation: luxuryGradientShift 14s ease-in-out infinite alternate;
       color: #fffaf2;
       text-shadow: 0 1px 2px rgba(34,21,15,.28);
       box-shadow: inset 0 1px 0 rgba(255,238,202,.28), 0 14px 34px rgba(44,33,28,.2);
@@ -348,6 +348,8 @@
     .pain-button[aria-pressed="true"] {
       border-color: #a27a54;
       background: var(--luxury-action);
+      background-size: 260% 100%;
+      animation: luxuryGradientShift 14s ease-in-out infinite alternate;
       color: #fffaf2;
     }
 
@@ -356,7 +358,9 @@
       padding: clamp(26px, 4vw, 48px);
       border-radius: var(--radius);
       border: 1px solid #c39a70;
-      background: radial-gradient(circle at 90% 12%, rgba(241,208,157,.13), transparent 42%), var(--luxury-dark);
+      background: var(--luxury-dark);
+      background-size: 260% 100%;
+      animation: luxuryGradientShift 14s ease-in-out infinite alternate;
       color: #fffaf2;
       box-shadow: var(--shadow);
     }
@@ -566,6 +570,8 @@
       border-top: 1px solid var(--line-strong);
       color: #e8d9c8;
       background: var(--luxury-dark);
+      background-size: 260% 100%;
+      animation: luxuryGradientShift 14s ease-in-out infinite alternate;
       font-size: 0.88rem;
     }
 
@@ -987,7 +993,7 @@
   </div>
 
   <style>
-    .contact-form{max-width:760px;margin:28px auto 0;display:grid;gap:16px;text-align:left}.contact-field{display:grid;gap:7px}.contact-field label,.contact-prepared label{font-weight:800}.contact-field input,.contact-field textarea,.contact-prepared textarea{width:100%;padding:14px 16px;border:1px solid var(--line-strong);border-radius:14px;color:var(--espresso);background:rgba(255,255,255,.78);font:inherit}.contact-field textarea{min-height:130px;resize:vertical}.footer-contact-action{display:grid;gap:12px;margin-top:8px}.footer-contact-action>.button{justify-self:start}.contact-form-status{min-height:24px;margin:0;text-align:left;font-weight:750}.contact-prepared{display:grid;gap:8px}.contact-prepared[hidden]{display:none}.contact-prepared textarea{min-height:180px}.channel-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.channel-options .button{width:100%}.channel-options .channel-email{position:relative;overflow:hidden;border:1px solid rgba(234,197,141,.7);background:var(--luxury-action);background-size:190% 190%;background-position:25% 50%;color:#fffaf2;text-shadow:0 1px 2px rgba(45,24,17,.3);box-shadow:inset 0 1px 0 rgba(255,237,193,.28),0 9px 23px rgba(76,45,30,.2);transition:background-position 1.8s ease-in-out,box-shadow .8s ease,transform .8s ease,border-color .8s ease}.channel-options .channel-email:hover,.channel-options .channel-email:focus-visible{background-position:75% 50%;border-color:#e6c699;box-shadow:inset 0 1px 0 rgba(255,242,208,.4),0 14px 29px rgba(83,48,29,.24);transform:translateY(-1px)}@media(prefers-reduced-motion:reduce){.site-header{animation:none}.channel-options .channel-email,.button--primary{transition:none}}
+    .contact-form{max-width:760px;margin:28px auto 0;display:grid;gap:16px;text-align:left}.contact-field{display:grid;gap:7px}.contact-field label,.contact-prepared label{font-weight:800}.contact-field input,.contact-field textarea,.contact-prepared textarea{width:100%;padding:14px 16px;border:1px solid var(--line-strong);border-radius:14px;color:var(--espresso);background:rgba(255,255,255,.78);font:inherit}.contact-field textarea{min-height:130px;resize:vertical}.footer-contact-action{display:grid;gap:12px;margin-top:8px}.footer-contact-action>.button{justify-self:start}.contact-form-status{min-height:24px;margin:0;text-align:left;font-weight:750}.contact-prepared{display:grid;gap:8px}.contact-prepared[hidden]{display:none}.contact-prepared textarea{min-height:180px}.channel-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.channel-options .button{width:100%}.channel-options .channel-email{position:relative;overflow:hidden;border:1px solid rgba(234,197,141,.7);background:var(--luxury-action);background-size:260% 100%;animation:luxuryGradientShift 14s ease-in-out infinite alternate;color:#fffaf2;text-shadow:0 1px 2px rgba(45,24,17,.3);box-shadow:inset 0 1px 0 rgba(255,237,193,.28),0 9px 23px rgba(76,45,30,.2);transition:background-position 1.8s ease-in-out,box-shadow .8s ease,transform .8s ease,border-color .8s ease}.channel-options .channel-email:hover,.channel-options .channel-email:focus-visible{background-position:75% 50%;border-color:#e6c699;box-shadow:inset 0 1px 0 rgba(255,242,208,.4),0 14px 29px rgba(83,48,29,.24);transform:translateY(-1px)}@media(prefers-reduced-motion:reduce){.site-header,.button--primary,.pain-button[aria-pressed="true"],.recommendation,footer,.channel-options .channel-email{animation:none;background-position:50% 50%}.channel-options .channel-email,.button--primary{transition:none}}
 .button:disabled{cursor:not-allowed;filter:grayscale(.35);opacity:.55;transform:none!important}.legal-language-note{grid-column:1/-1;margin:0;color:#f2dfca;font-size:.86rem}@media(max-width:760px){.channel-options{grid-template-columns:1fr}.footer-contact-action>.button{width:100%}}
   </style>
 
