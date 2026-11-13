@@ -119,6 +119,15 @@
       vk:'https://vk.ru/id861710891',
       email:'mailto:20.13.25.iki@gmail.com'
     };
+    // Anonymous goal events only after explicit consent to Yandex Metrica.
+    // These are clicks/attempted contact handoffs, never proof of a sent message.
+    const trackContactGoal=(eventName)=>{
+      let consent=null;
+      try { consent=localStorage.getItem('irina-metrica-consent-v1'); } catch (_) {}
+      if(consent!=='yes' || typeof window.ym!=='function')return;
+      const allowed=['contact_form_ready','contact_channel_email','contact_channel_whatsapp','contact_channel_telegram','contact_channel_max','contact_channel_vk','contact_entry'];
+      if(allowed.includes(eventName))window.ym(114152125,'reachGoal',eventName);
+    };
     const COPY={
       ru:{choose:'Выбрать способ отправки',prepared:'Обращение подготовлено. Выберите удобный канал.',manual:'Текст обращения подготовлен ниже. Скопируйте его вручную и вставьте в сообщение.',legal:'Русская версия юридических документов является основной.',title:'Выберите способ отправки',intro:'Вы сами подтвердите отправку во внешнем сервисе. До этого обращение не считается отправленным.',name:'Имя',reply:'Контакт для ответа',task:'Задача',source:'Источник',language:'Язык',time:'Подготовлено',consent:'Согласия подтверждены: обработка персональных данных и ознакомление с политиками.',version:'Версия согласия: 2026-11-05'},
       en:{choose:'Choose how to send',prepared:'Your enquiry is prepared. Choose a convenient channel.',manual:'The enquiry text is shown below. Copy it manually and paste it into your message.',legal:'The Russian version of the legal documents is authoritative.',title:'Choose how to send',intro:'You will confirm sending in the external service. Until then, the enquiry is not considered sent.',name:'Name',reply:'Reply contact',task:'Project',source:'Source',language:'Language',time:'Prepared',consent:'Consents confirmed: personal data processing and acknowledgement of the policies.',version:'Consent version: 2026-11-05'},
@@ -156,13 +165,14 @@
     const updateState=()=>{choose.disabled=!isComplete()};
     [name,reply,task,processing,awareness].forEach(field=>{field.addEventListener('input',updateState);field.addEventListener('change',updateState)});form.addEventListener('submit',event=>{event.preventDefault();openChooser()});
     const buildPreparedMessage=()=>{const language=currentLanguage(),copy=COPY[language];return [`${copy.name}: ${name.value.trim()}`,`${copy.reply}: ${reply.value.trim()}`,`${copy.task}: ${task.value.trim()}`,`${copy.source}: ${location.href}`,`${copy.language}: ${language.toUpperCase()}`,`${copy.time}: ${new Date().toISOString()}`,copy.consent,copy.version].join('\n')};
-    const openChooser=()=>{if(!isComplete()){updateState();return}const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;modal.querySelector('[data-channel="email"]').href=`mailto:20.13.25.iki@gmail.com?${new URLSearchParams({subject:'Запрос с сайта',body:text})}`;preparedWrap.hidden=false;status.textContent=COPY[currentLanguage()].prepared;modal.classList.add('open');modal.setAttribute('aria-hidden','false');modal.querySelector('.close-modal').focus()};
+    const openChooser=()=>{if(!isComplete()){updateState();return}trackContactGoal('contact_form_ready');const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;modal.querySelector('[data-channel="email"]').href=`mailto:20.13.25.iki@gmail.com?${new URLSearchParams({subject:'Запрос с сайта',body:text})}`;preparedWrap.hidden=false;status.textContent=COPY[currentLanguage()].prepared;modal.classList.add('open');modal.setAttribute('aria-hidden','false');modal.querySelector('.close-modal').focus()};
     const closeChooser=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');choose.focus()};
     choose.addEventListener('click',openChooser);modal.querySelector('.close-modal').addEventListener('click',closeChooser);modal.addEventListener('click',event=>{if(event.target===modal)closeChooser()});
     const copyText=async text=>{try{await navigator.clipboard.writeText(text);return true}catch{return false}};
-    const sendPreparedMessage=async channel=>{if(!isComplete())return;const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;preparedWrap.hidden=false;let url=CHANNELS[channel];if(channel==='whatsapp')url+=`?text=${encodeURIComponent(text)}`;if(['telegram','max','vk'].includes(channel)){const copied=await copyText(text);document.getElementById('channel-status').textContent=copied?COPY[currentLanguage()].prepared:COPY[currentLanguage()].manual}window.open(url,'_blank','noopener')};
+    const sendPreparedMessage=async channel=>{if(!isComplete())return;trackContactGoal('contact_channel_'+channel);const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;preparedWrap.hidden=false;let url=CHANNELS[channel];if(channel==='whatsapp')url+=`?text=${encodeURIComponent(text)}`;if(['telegram','max','vk'].includes(channel)){const copied=await copyText(text);document.getElementById('channel-status').textContent=copied?COPY[currentLanguage()].prepared:COPY[currentLanguage()].manual}window.open(url,'_blank','noopener')};
     modal.querySelectorAll('button[data-channel]').forEach(button=>button.addEventListener('click',()=>sendPreparedMessage(button.dataset.channel)));
-    document.querySelectorAll('.social,.contact-icon,.footer-icon,#write-to-me').forEach(entry=>{entry.dataset.contactEntry='';entry.href='#contact';entry.removeAttribute('target');entry.removeAttribute('rel');entry.removeAttribute('data-modal');entry.addEventListener('click',event=>{event.preventDefault();document.getElementById('contact').scrollIntoView({behavior:'smooth'});name.focus({preventScroll:true})})});
+    modal.querySelector('a[data-channel="email"]').addEventListener('click',()=>{if(isComplete())trackContactGoal('contact_channel_email')});
+    document.querySelectorAll('.social,.contact-icon,.footer-icon,#write-to-me').forEach(entry=>{entry.dataset.contactEntry='';entry.href='#contact';entry.removeAttribute('target');entry.removeAttribute('rel');entry.removeAttribute('data-modal');entry.addEventListener('click',event=>{event.preventDefault();trackContactGoal('contact_entry');document.getElementById('contact').scrollIntoView({behavior:'smooth'});name.focus({preventScroll:true})})});
     updateState();
   })();
   </script>
