@@ -943,7 +943,7 @@
       <h2 id="channel-title" data-contact-i18n>Выберите способ отправки</h2>
       <p id="channel-intro" data-contact-i18n>Вы сами подтвердите отправку во внешнем сервисе. До этого обращение не считается отправленным.</p>
       <div class="channel-options">
-        <a class="button button--primary" data-channel="email" href="mailto:20.13.25.iki@gmail.com" target="_top">Email</a>
+        <a class="button button--primary" data-channel="email" href="mailto:20.13.25.iki@gmail.com" target="_top">Email</a><a class="button button--soft" data-email-fallback="gmail" href="https://mail.google.com/mail/?view=cm" target="_blank" rel="noopener">Gmail в браузере</a>
         <button class="button button--soft" type="button" data-channel="whatsapp">WhatsApp</button>
         <button class="button button--soft" type="button" data-channel="telegram">Telegram</button>
         <button class="button button--soft" type="button" data-channel="max">MAX</button>
@@ -1126,6 +1126,9 @@
       const message = buildPreparedMessage();
       preparedMessage.value = message;
       channelModal.querySelector('[data-channel="email"]').href = `mailto:20.13.25.iki@gmail.com?${new URLSearchParams({ subject: 'Запрос с сайта', body: message })}`;
+      const gmailUrl = new URL('https://mail.google.com/mail/');
+      gmailUrl.search = new URLSearchParams({ view: 'cm', fs: '1', to: '20.13.25.iki@gmail.com', su: 'Запрос с сайта', body: message }).toString();
+      channelModal.querySelector('[data-email-fallback="gmail"]').href = gmailUrl.toString();
       preparedWrap.hidden = false;
       contactStatus.textContent = contactCopy[contactLanguage()].prepared;
       lastFocusedElement = chooseChannel;
@@ -1156,6 +1159,7 @@
     };
     channelModal.querySelectorAll('button[data-channel]').forEach(button => button.addEventListener('click', () => sendPreparedMessage(button.dataset.channel)));
     channelModal.querySelector('a[data-channel="email"]').addEventListener('click', () => { if (contactComplete()) trackContactGoal('contact_channel_email'); });
+    channelModal.querySelector('a[data-email-fallback="gmail"]').addEventListener('click', () => { if (contactComplete()) trackContactGoal('contact_channel_email'); });
     document.querySelectorAll('.contact-icon').forEach(entry => {
       entry.dataset.contactEntry = '';
       entry.href = '#contact';
