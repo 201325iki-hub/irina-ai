@@ -943,7 +943,7 @@
       <h2 id="channel-title" data-contact-i18n>Выберите способ отправки</h2>
       <p id="channel-intro" data-contact-i18n>Вы сами подтвердите отправку во внешнем сервисе. До этого обращение не считается отправленным.</p>
       <div class="channel-options">
-        <a class="button button--primary" data-channel="email" href="mailto:20.13.25.iki@gmail.com" target="_top">Email</a><a class="button button--soft" data-email-fallback="gmail" href="https://mail.google.com/mail/?view=cm" target="_blank" rel="noopener">Gmail в браузере</a>
+        <a class="button button--primary channel-email" data-channel="email" href="https://mail.google.com/mail/?view=cm" target="_blank" rel="noopener">Email</a>
         <button class="button button--soft" type="button" data-channel="whatsapp">WhatsApp</button>
         <button class="button button--soft" type="button" data-channel="telegram">Telegram</button>
         <button class="button button--soft" type="button" data-channel="max">MAX</button>
@@ -984,7 +984,7 @@
   </div>
 
   <style>
-    .contact-form{max-width:760px;margin:28px auto 0;display:grid;gap:16px;text-align:left}.contact-field{display:grid;gap:7px}.contact-field label,.contact-prepared label{font-weight:800}.contact-field input,.contact-field textarea,.contact-prepared textarea{width:100%;padding:14px 16px;border:1px solid var(--line-strong);border-radius:14px;color:var(--espresso);background:rgba(255,255,255,.78);font:inherit}.contact-field textarea{min-height:130px;resize:vertical}.footer-contact-action{display:grid;gap:12px;margin-top:8px}.footer-contact-action>.button{justify-self:start}.contact-form-status{min-height:24px;margin:0;text-align:left;font-weight:750}.contact-prepared{display:grid;gap:8px}.contact-prepared[hidden]{display:none}.contact-prepared textarea{min-height:180px}.channel-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.channel-options .button{width:100%}.button:disabled{cursor:not-allowed;filter:grayscale(.35);opacity:.55;transform:none!important}.legal-language-note{grid-column:1/-1;margin:0;color:#f2dfca;font-size:.86rem}@media(max-width:760px){.channel-options{grid-template-columns:1fr}.footer-contact-action>.button{width:100%}}
+    .contact-form{max-width:760px;margin:28px auto 0;display:grid;gap:16px;text-align:left}.contact-field{display:grid;gap:7px}.contact-field label,.contact-prepared label{font-weight:800}.contact-field input,.contact-field textarea,.contact-prepared textarea{width:100%;padding:14px 16px;border:1px solid var(--line-strong);border-radius:14px;color:var(--espresso);background:rgba(255,255,255,.78);font:inherit}.contact-field textarea{min-height:130px;resize:vertical}.footer-contact-action{display:grid;gap:12px;margin-top:8px}.footer-contact-action>.button{justify-self:start}.contact-form-status{min-height:24px;margin:0;text-align:left;font-weight:750}.contact-prepared{display:grid;gap:8px}.contact-prepared[hidden]{display:none}.contact-prepared textarea{min-height:180px}.channel-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.channel-options .button{width:100%}.channel-options .channel-email{border-color:#ad6b78;background:linear-gradient(135deg,#bd798b 0%,#995f85 55%,#785f91 100%);color:#fff;box-shadow:0 8px 22px rgba(112,66,100,.18);transition:background 180ms ease,transform 180ms ease,box-shadow 180ms ease}.channel-options .channel-email:hover{background:linear-gradient(135deg,#ce8d9d 0%,#ad7294 55%,#8d72a2 100%)}.button:disabled{cursor:not-allowed;filter:grayscale(.35);opacity:.55;transform:none!important}.legal-language-note{grid-column:1/-1;margin:0;color:#f2dfca;font-size:.86rem}@media(max-width:760px){.channel-options{grid-template-columns:1fr}.footer-contact-action>.button{width:100%}}
   </style>
 
   <script>
@@ -1125,10 +1125,10 @@
       trackContactGoal('contact_form_ready');
       const message = buildPreparedMessage();
       preparedMessage.value = message;
-      channelModal.querySelector('[data-channel="email"]').href = `mailto:20.13.25.iki@gmail.com?${new URLSearchParams({ subject: 'Запрос с сайта', body: message })}`;
+      
       const gmailUrl = new URL('https://mail.google.com/mail/');
       gmailUrl.search = new URLSearchParams({ view: 'cm', fs: '1', to: '20.13.25.iki@gmail.com', su: 'Запрос с сайта', body: message }).toString();
-      channelModal.querySelector('[data-email-fallback="gmail"]').href = gmailUrl.toString();
+      channelModal.querySelector('[data-channel="email"]').href = gmailUrl.toString();
       preparedWrap.hidden = false;
       contactStatus.textContent = contactCopy[contactLanguage()].prepared;
       lastFocusedElement = chooseChannel;
@@ -1159,7 +1159,7 @@
     };
     channelModal.querySelectorAll('button[data-channel]').forEach(button => button.addEventListener('click', () => sendPreparedMessage(button.dataset.channel)));
     channelModal.querySelector('a[data-channel="email"]').addEventListener('click', () => { if (contactComplete()) trackContactGoal('contact_channel_email'); });
-    channelModal.querySelector('a[data-email-fallback="gmail"]').addEventListener('click', () => { if (contactComplete()) trackContactGoal('contact_channel_email'); });
+    
     document.querySelectorAll('.contact-icon').forEach(entry => {
       entry.dataset.contactEntry = '';
       entry.href = '#contact';
