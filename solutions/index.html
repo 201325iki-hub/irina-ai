@@ -1067,6 +1067,14 @@
       vk: 'https://vk.ru/id861710891',
       email: 'mailto:20.13.25.iki@gmail.com'
     };
+    // Same named goals as the main page; only with affirmative analytics consent.
+    const trackContactGoal = (eventName) => {
+      let consent = null;
+      try { consent = localStorage.getItem('irina-metrica-consent-v1'); } catch (_) {}
+      if (consent !== 'yes' || typeof window.ym !== 'function') return;
+      const allowed = ['contact_form_ready', 'contact_channel_email', 'contact_channel_whatsapp', 'contact_channel_telegram', 'contact_channel_max', 'contact_channel_vk', 'contact_entry'];
+      if (allowed.includes(eventName)) window.ym(114152125, 'reachGoal', eventName);
+    };
     const contactCopy = {
       ru: { choose: 'Выбрать способ отправки', prepared: 'Обращение подготовлено. Выберите удобный канал.', manual: 'Текст обращения подготовлен ниже. Скопируйте его вручную и вставьте в сообщение.', legal: 'Русская версия юридических документов является основной.', title: 'Выберите способ отправки', intro: 'Вы сами подтвердите отправку во внешнем сервисе. До этого обращение не считается отправленным.', name: 'Имя', reply: 'Контакт для ответа', task: 'Задача', source: 'Источник', language: 'Язык', time: 'Подготовлено', consent: 'Согласия подтверждены: обработка персональных данных и ознакомление с политиками.', version: 'Версия согласия: 2026-11-05' },
       en: { choose: 'Choose how to send', prepared: 'Your enquiry is prepared. Choose a convenient channel.', manual: 'The enquiry text is shown below. Copy it manually and paste it into your message.', legal: 'The Russian version of the legal documents is authoritative.', title: 'Choose how to send', intro: 'You will confirm sending in the external service. Until then, the enquiry is not considered sent.', name: 'Name', reply: 'Reply contact', task: 'Project', source: 'Source', language: 'Language', time: 'Prepared', consent: 'Consents confirmed: personal data processing and acknowledgement of the policies.', version: 'Consent version: 2026-11-05' },
@@ -1114,6 +1122,7 @@
     };
     const openChannelChooser = () => {
       if (!contactComplete()) { updateContactState(); return; }
+      trackContactGoal('contact_form_ready');
       const message = buildPreparedMessage();
       preparedMessage.value = message;
       channelModal.querySelector('[data-channel="email"]').href = `mailto:20.13.25.iki@gmail.com?${new URLSearchParams({ subject: 'Запрос с сайта', body: message })}`;
@@ -1133,6 +1142,7 @@
     };
     const sendPreparedMessage = async channel => {
       if (!contactComplete()) return;
+      trackContactGoal('contact_channel_' + channel);
       const message = buildPreparedMessage();
       preparedMessage.value = message;
       preparedWrap.hidden = false;
@@ -1145,6 +1155,7 @@
       window.open(url, '_blank', 'noopener');
     };
     channelModal.querySelectorAll('button[data-channel]').forEach(button => button.addEventListener('click', () => sendPreparedMessage(button.dataset.channel)));
+    channelModal.querySelector('a[data-channel="email"]').addEventListener('click', () => { if (contactComplete()) trackContactGoal('contact_channel_email'); });
     document.querySelectorAll('.contact-icon').forEach(entry => {
       entry.dataset.contactEntry = '';
       entry.href = '#contact';
@@ -1153,6 +1164,7 @@
       entry.removeAttribute('data-modal');
       entry.addEventListener('click', event => {
         event.preventDefault();
+        trackContactGoal('contact_entry');
         document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
         contactName.focus({ preventScroll: true });
       });
