@@ -1256,9 +1256,9 @@
   let choice = null, started = false;
   try { choice = localStorage.getItem(KEY); } catch (_) {}
   const translations = {
-    ru: ['Cookie и аналитика сайта', 'С вашего разрешения Яндекс Метрика использует файлы cookie и данные о посещениях для анализа и улучшения сайта. Без согласия аналитика не запускается. Отказ не ограничивает работу сайта.', 'Разрешить', 'Не разрешать', 'Настройки аналитики', 'Аналитика разрешена. Вы можете изменить выбор.', 'Аналитика отключена. Вы можете изменить выбор.'],
-    en: ['Cookies and website analytics', 'With your permission, Yandex Metrica uses cookies and visit data to analyse and improve the website. Analytics does not start without consent. Declining does not limit the website.', 'Allow', 'Decline', 'Analytics settings', 'Analytics enabled. You can change your choice.', 'Analytics disabled. You can change your choice.'],
-    it: ['Cookie e analisi del sito', 'Con il tuo consenso, Yandex Metrica usa cookie e dati sulle visite per analizzare e migliorare il sito. Le analisi non vengono avviate senza consenso. Rifiutare non limita il sito.', 'Consenti', 'Rifiuta', 'Impostazioni analitiche', 'Analisi attiva. Puoi modificare la scelta.', 'Analisi disattivata. Puoi modificare la scelta.']
+    ru: ['Cookie и аналитика сайта', 'С вашего разрешения Яндекс Метрика использует файлы cookie и данные о посещениях для анализа и улучшения сайта. Без согласия аналитика не запускается. Отказ не ограничивает работу сайта.', 'Разрешить', 'Не разрешать', 'Настройки cookie и аналитики', 'Аналитика разрешена. Вы можете изменить выбор.', 'Аналитика отключена. Вы можете изменить выбор.'],
+    en: ['Cookies and website analytics', 'With your permission, Yandex Metrica uses cookies and visit data to analyse and improve the website. Analytics does not start without consent. Declining does not limit the website.', 'Allow', 'Decline', 'Cookie and analytics settings', 'Analytics enabled. You can change your choice.', 'Analytics disabled. You can change your choice.'],
+    it: ['Cookie e analisi del sito', 'Con il tuo consenso, Yandex Metrica usa cookie e dati sulle visite per analizzare e migliorare il sito. Le analisi non vengono avviate senza consenso. Rifiutare non limita il sito.', 'Consenti', 'Rifiuta', 'Impostazioni cookie e analisi', 'Analisi attiva. Puoi modificare la scelta.', 'Analisi disattivata. Puoi modificare la scelta.']
   };
   function labels() { return translations[(document.documentElement.lang || 'ru').slice(0,2)] || translations.ru; }
   function start() {
