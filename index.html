@@ -242,9 +242,9 @@
   let choice = null, started = false;
   try { choice = localStorage.getItem(KEY); } catch (_) {}
   const translations = {
-    ru: ['Cookie и аналитика сайта', 'С вашего разрешения Яндекс Метрика использует файлы cookie и данные о посещениях для анализа и улучшения сайта. Без согласия аналитика не запускается. Отказ не ограничивает работу сайта.', 'Разрешить', 'Не разрешать', 'Настройки cookie и аналитики', 'Аналитика разрешена. Вы можете изменить выбор.', 'Аналитика отключена. Вы можете изменить выбор.'],
-    en: ['Cookies and website analytics', 'With your permission, Yandex Metrica uses cookies and visit data to analyse and improve the website. Analytics does not start without consent. Declining does not limit the website.', 'Allow', 'Decline', 'Cookie and analytics settings', 'Analytics enabled. You can change your choice.', 'Analytics disabled. You can change your choice.'],
-    it: ['Cookie e analisi del sito', 'Con il tuo consenso, Yandex Metrica usa cookie e dati sulle visite per analizzare e migliorare il sito. Le analisi non vengono avviate senza consenso. Rifiutare non limita il sito.', 'Consenti', 'Rifiuta', 'Impostazioni cookie e analisi', 'Analisi attiva. Puoi modificare la scelta.', 'Analisi disattivata. Puoi modificare la scelta.']
+    ru: ['Cookie и аналитика сайта', 'Мы используем необходимые технологии для работы сайта. С вашего разрешения Яндекс Метрика также может использовать файлы cookie для анализа посещаемости. Вы можете отказаться от аналитики — сайт продолжит работать.', 'Разрешить', 'Не разрешать', 'Настройки cookie и аналитики', 'Аналитика разрешена. Вы можете изменить выбор.', 'Аналитика отключена. Вы можете изменить выбор.'],
+    en: ['Cookies and website analytics', 'We use essential technologies to operate the website. With your permission, Yandex Metrica may also use cookies to analyse visits. You can decline analytics and continue using the website.', 'Allow', 'Decline', 'Cookie and analytics settings', 'Analytics enabled. You can change your choice.', 'Analytics disabled. You can change your choice.'],
+    it: ['Cookie e analisi del sito', 'Utilizziamo tecnologie necessarie per il funzionamento del sito. Con il tuo consenso, Yandex Metrica può anche usare cookie per analizzare le visite. Puoi rifiutare le analisi e continuare a usare il sito.', 'Consenti', 'Rifiuta', 'Impostazioni cookie e analisi', 'Analisi attiva. Puoi modificare la scelta.', 'Analisi disattivata. Puoi modificare la scelta.']
   };
   function labels() { return translations[(document.documentElement.lang || 'ru').slice(0,2)] || translations.ru; }
   function start() {
@@ -271,7 +271,7 @@
       '#iki-metrika-content{max-width:1160px;margin:auto;display:flex;align-items:center;gap:18px;justify-content:space-between}',
       '#iki-metrika-copy{min-width:0;flex:1}',
       '#iki-metrika-panel h2{font-size:14px;letter-spacing:.03em;margin:0 0 3px;color:#ffc0db;font-weight:650}',
-      '#iki-metrika-panel p{font-size:12px;line-height:1.5;margin:0;color:#eadde7}',
+      '#iki-metrika-panel p{font-size:13px;line-height:1.5;margin:0;color:#eadde7}',
       '#iki-metrika-choices{display:flex;align-items:center;gap:9px;flex-shrink:0}',
       '#iki-metrika-choices button{font-size:12px;white-space:nowrap;border:1px solid rgba(255,255,255,.27);border-radius:999px;background:transparent;color:#fff;padding:10px 16px}',
       '#iki-metrika-choices button:first-child{background:#b02b71;border-color:#b02b71;color:white}',
