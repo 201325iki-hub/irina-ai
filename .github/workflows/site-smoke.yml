@@ -7,7 +7,7 @@ on:
       - '.github/workflows/site-smoke.yml'
   workflow_dispatch:
   schedule:
-    - cron: '15 6 * * *'
+    - cron: '15 6,18 * * *'
 
 permissions:
   contents: read
@@ -49,6 +49,17 @@ jobs:
                   const response = await page.goto(url,{waitUntil:'domcontentloaded',timeout:25000});
                   await page.waitForTimeout(1200);
                   if (!response || response.status()>=400) throw new Error('HTTP '+(response?.status()??'no response'));
+                  const panel = page.locator('#iki-metrika-panel');
+                  const settings = page.locator('#iki-metrika-settings');
+                  if (await panel.count() !== 1 || await settings.count() !== 1) throw new Error('Панель или настройки аналитики отсутствуют');
+                  if (await panel.isVisible()) throw new Error('Панель аналитики перекрывает первый экран');
+                  if (!await settings.isVisible()) throw new Error('Настройки аналитики в подвале недоступны');
+                  await settings.click();
+                  if (!await panel.isVisible()) throw new Error('Панель не открывается через настройки');
+                  await page.locator('#iki-metrika-reject').click();
+                  if (await panel.isVisible()) throw new Error('Панель не закрылась после отказа');
+                  if (await page.evaluate(() => localStorage.getItem('irina-metrica-consent-v1')) !== 'no') throw new Error('Отказ не сохранён');
+                  if (metrics.length) throw new Error('Метрика запрашивалась без согласия');
                   const title = await page.title();
                   const body = await page.locator('body').innerText();
                   if (!title || body.length<100) throw new Error('Страница пуста или отсутствует заголовок');
