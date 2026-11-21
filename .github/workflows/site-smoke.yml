@@ -80,7 +80,7 @@ jobs:
               const response = await context.request.get('https://t.me/XgWydWim95I4ZDEy',{timeout:15000});
               lines.push('- Telegram: HTTP '+response.status()+' (статус не подтверждает существование/содержимое канала)');
               if(response.status()>=400) errors++;
-              await context.dispose();
+              await context.close();
             } catch(e) { lines.push('- Telegram: проверка недоступна: '+String(e.message).slice(0,200)); errors++; }
             await browser.close();
             lines.push('Ограничения: эта проверка не отправляет формы и сообщения; не подтверждает получение целей в интерфейсе Метрики, заявки или оплаты. Проверка элементов контактов не равна фактическому открытию внешних приложений.');
