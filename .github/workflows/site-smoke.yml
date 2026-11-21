@@ -1,6 +1,10 @@
 name: Проверка опубликованного сайта (без изменения данных)
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/site-smoke.yml'
   workflow_dispatch:
   schedule:
     - cron: '15 6 * * *'
