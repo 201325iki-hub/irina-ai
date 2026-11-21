@@ -1323,7 +1323,8 @@
     root.querySelector('#iki-metrika-reject').addEventListener('click', () => select('no'));
     document.addEventListener('irina-language-change', render);
     render();
-    panel.hidden = choice !== null;
+    // Keep the landing screen unobstructed. Analytics remains off until explicit opt-in via footer settings.
+    panel.hidden = true;
     if (choice === 'yes') start();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', main, { once: true });
