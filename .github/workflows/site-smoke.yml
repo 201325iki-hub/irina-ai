@@ -1,0 +1,88 @@
+name: Проверка опубликованного сайта (без изменения данных)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 6 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Установить браузер для проверки
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Проверить опубликованные страницы и ссылки
+        shell: bash
+        run: |
+          node <<'JS'
+          const { chromium } = require('playwright');
+          const targets = [
+            'https://201325iki-hub.github.io/irina-ai/',
+            'https://201325iki-hub.github.io/irina-ai/solutions/'
+          ];
+          const expected = ['telegram','whatsapp','max','vk','email'];
+          (async () => {
+            const browser = await chromium.launch({headless:true});
+            let errors = 0;
+            const lines = ['## Проверка опубликованного сайта', 'Дата (UTC): '+new Date().toISOString(), 'Проверены настоящие опубликованные страницы, а не код GitHub.'];
+            for (const mobile of [false, true]) {
+              const context = await browser.newContext(mobile ? {viewport:{width:390,height:844},isMobile:true,hasTouch:true} : {viewport:{width:1365,height:900}});
+              for (const url of targets) {
+                const page = await context.newPage();
+                const jsErrors = [];
+                const metrics = [];
+                page.on('pageerror', e => jsErrors.push(e.message));
+                page.on('request', req => { if (/mc\\.yandex\\.(ru|com)/i.test(req.url())) metrics.push(req.url()); });
+                // Prevent synthetic tests from sending visitor data to Metrica.
+                await page.route(/mc\\.yandex\\.(ru|com)/i, route => route.abort());
+                try {
+                  const response = await page.goto(url,{waitUntil:'domcontentloaded',timeout:25000});
+                  await page.waitForTimeout(1200);
+                  if (!response || response.status()>=400) throw new Error('HTTP '+(response?.status()??'no response'));
+                  const title = await page.title();
+                  const body = await page.locator('body').innerText();
+                  if (!title || body.length<100) throw new Error('Страница пуста или отсутствует заголовок');
+                  const hrefs = await page.locator('a[href]').evaluateAll(a=>a.map(x=>x.href));
+                  const expectedPresent = {
+                    telegram: hrefs.some(x=>x.includes('t.me/')) || await page.locator('[data-channel="telegram"]').count()>0,
+                    whatsapp: hrefs.some(x=>x.includes('wa.me/')) || await page.locator('[data-channel="whatsapp"]').count()>0,
+                    max: hrefs.some(x=>x.includes('max.ru/')) || await page.locator('[data-channel="max"]').count()>0,
+                    vk: hrefs.some(x=>x.includes('vk.ru/')) || await page.locator('[data-channel="vk"]').count()>0,
+                    email: hrefs.some(x=>x.startsWith('mailto:')) || await page.locator('[data-channel="email"]').count()>0
+                  };
+                  const missing = expected.filter(k=>!expectedPresent[k]);
+                  if (missing.length) throw new Error('Не найдены элементы каналов: '+missing.join(', '));
+                  if (jsErrors.length) throw new Error('JS errors: '+jsErrors.slice(0,3).join(' | '));
+                  lines.push('- OK '+(mobile?'мобильный':'компьютер')+' '+url+' HTTP '+response.status()+'; контакты: '+expected.join(', '));
+                  if (metrics.length) {
+                    lines.push('  - ВНИМАНИЕ: обнаружено '+metrics.length+' попыток запросов к Метрике до согласия');
+                    errors++;
+                  } else lines.push('  - До согласия запросы к mc.yandex.* не обнаружены');
+                } catch(e) {
+                  errors++;
+                  lines.push('- ОШИБКА '+(mobile?'мобильный':'компьютер')+' '+url+': '+String(e.message).slice(0,350));
+                } finally { await page.close(); }
+              }
+              await context.close();
+            }
+            try {
+              const context = await browser.newContext();
+              const response = await context.request.get('https://t.me/XgWydWim95I4ZDEy',{timeout:15000});
+              lines.push('- Telegram: HTTP '+response.status()+' (статус не подтверждает существование/содержимое канала)');
+              if(response.status()>=400) errors++;
+              await context.dispose();
+            } catch(e) { lines.push('- Telegram: проверка недоступна: '+String(e.message).slice(0,200)); errors++; }
+            await browser.close();
+            lines.push('Ограничения: эта проверка не отправляет формы и сообщения; не подтверждает получение целей в интерфейсе Метрики, заявки или оплаты. Проверка элементов контактов не равна фактическому открытию внешних приложений.');
+            const fs = require('fs');
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY || '/dev/stdout',lines.join('\\n')+'\\n');
+            console.log(lines.join('\\n'));
+            if(errors) process.exitCode=1;
+          })().catch(e=>{console.error(e);process.exitCode=1;});
+          JS
