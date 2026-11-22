@@ -50,8 +50,8 @@ async function fillAndOpenChannel(label) {
     href: element.getAttribute('href'),
     target: element.getAttribute('target'),
   }));
-  assert.equal(email.target, '_top', `${label}: Email открывается верхним окном`);
-  assert.match(email.href, /^mailto:20\.13\.25\.iki@gmail\.com\?subject=.+&body=.+/u, `${label}: Email содержит адрес, тему и текст`);
+  assert.equal(email.target, '_blank', `${label}: Gmail открывается в отдельной вкладке`);
+  assert.match(email.href, /^https:\/\/mail\.google\.com\/mail\/\?.*to=20(?:\.|%2E)13(?:\.|%2E)25(?:\.|%2E)iki(?:%40|@)gmail(?:\.|%2E)com.*body=/u, `${label}: Gmail содержит адрес и текст`);
   await page.locator('#channel-modal .close-modal').click();
 }
 
@@ -71,6 +71,10 @@ try {
     await page.locator(`[data-pain="${pain}"]`).click();
     assert.equal(await page.locator(`[data-pain="${pain}"]`).getAttribute('aria-pressed'), 'true', `Лендинг: работает вариант ${pain}`);
     assert.equal(await page.locator('[data-pain][aria-pressed="true"]').count(), 1, 'Лендинг: активна одна рекомендация');
+  }
+
+  for (const service of ['site', 'ai', 'bot', 'automation']) {
+    await assertVisibleTarget(`.hero-list a[href="#service-${service}"]`, `service-${service}`, `Лендинг — плашка ${service}`);
   }
 
   const contactIcons = page.locator('.contact-icon');
@@ -103,9 +107,13 @@ try {
       const report = await page.evaluate(() => ({
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
         imagesReady: [...document.images].every(image => image.complete && image.naturalWidth > 0),
+        contentLeft: document.querySelector('footer .shell, footer .wrap')?.getBoundingClientRect().left,
+        settingsLeft: document.querySelector('#iki-metrika-settings')?.getBoundingClientRect().left,
       }));
       assert.ok(report.overflow <= 1, `${url}: горизонтальный сдвиг ${report.overflow}px на ${width}px`);
       assert.equal(report.imagesReady, true, `${url}: изображения загружены на ${width}px`);
+      assert.ok(Number.isFinite(report.contentLeft) && Number.isFinite(report.settingsLeft), `${url}: футер аналитики создан`);
+      assert.ok(Math.abs(report.contentLeft - report.settingsLeft) <= 1.5, `${url}: настройки cookie выровнены на ${width}px`);
     }
   }
 } finally {

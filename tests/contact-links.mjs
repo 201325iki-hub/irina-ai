@@ -31,8 +31,8 @@ try {
     assert.equal(await page.locator('#choose-channel').isEnabled(), true, `${file}: выбор канала разблокируется после формы и двух галочек`);
     await page.locator('#choose-channel').click();
     const email = await page.locator('[data-channel="email"]').evaluate(element => ({ href: element.getAttribute('href'), target: element.getAttribute('target') }));
-    assert.equal(email.target, '_top', `${file}: Email открывается верхним окном`);
-    assert.match(email.href, /^mailto:20\.13\.25\.iki@gmail\.com\?subject=.+&body=.+/u, `${file}: письмо содержит адрес, тему и текст`);
+    assert.equal(email.target, '_blank', `${file}: Gmail открывается в отдельной вкладке`);
+    assert.match(email.href, /^https:\/\/mail\.google\.com\/mail\/\?.*to=20(?:\.|%2E)13(?:\.|%2E)25(?:\.|%2E)iki(?:%40|@)gmail(?:\.|%2E)com.*body=/u, `${file}: Gmail содержит адрес и текст`);
     assert.equal(await page.locator('[data-channel]').count(), 5, `${file}: доступны пять каналов связи`);
     await page.close();
   }

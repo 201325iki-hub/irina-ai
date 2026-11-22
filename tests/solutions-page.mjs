@@ -20,6 +20,15 @@ const requiredLanding = [
   'id="choose-channel"',
   'data-channel="email"',
   'id="reviews"',
+  'href="#service-site"',
+  'href="#service-ai"',
+  'href="#service-bot"',
+  'href="#service-automation"',
+  'id="service-site"',
+  'id="service-ai"',
+  'id="service-bot"',
+  'id="service-automation"',
+  '* Сроки зависят от объёма работы. Они будут указаны в КП после согласования работы.',
 ];
 for (const fragment of requiredLanding) {
   if (!landing.includes(fragment)) throw new Error(`В лендинге отсутствует: ${fragment}`);
@@ -29,5 +38,9 @@ if (!sitemap.includes('https://201325iki-hub.github.io/irina-ai/solutions/')) {
   throw new Error('Лендинг отсутствует в sitemap.xml');
 }
 if (/\.portrait::before\s*\{/i.test(landing)) throw new Error('Над фотографией остался декоративный ореол');
+if (/<ul class="hero-list"[^>]*>[\s\S]*?<li>\s*(?!<a\b)/u.test(landing)) {
+  throw new Error('Плашки первого экрана должны быть интерактивными ссылками');
+}
+if (!/\.service-card:target/u.test(landing)) throw new Error('Целевая карточка решения не выделяется после перехода');
 
-console.log('PASS: /solutions/ готов к публикации, фото и двусторонняя связь присутствуют.');
+console.log('PASS: /solutions/ содержит интерактивные плашки, пояснение о сроках, фото и двустороннюю связь.');
