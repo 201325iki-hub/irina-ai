@@ -138,92 +138,103 @@
     })();
   </script>
   <style>
-    .contact-icons,.footer-icons{display:none!important}.contact-prepared{display:grid;gap:8px;margin-top:16px}.contact-prepared[hidden]{display:none}.contact-prepared textarea{min-height:170px}.channel-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.channel-options .btn{width:100%}.channel-options .btn-secondary{border-color:#7c3aed;color:#241a29;background:#f4edf8}.legal-authority{flex:0 0 100%;width:100%;margin:0;color:#bcb1c0;font-size:.82rem}.contact-entry-notice{margin:0 0 18px;color:#e8dfea;font-size:.94rem}.btn:disabled{cursor:not-allowed;filter:grayscale(.35);opacity:.55;transform:none!important}@media(max-width:580px){.channel-options{grid-template-columns:1fr}}
+    .contact-icons,.footer-icons{display:none!important}
+    .contact-entry-notice{margin:0 0 18px;color:#e8dfea;font-size:.94rem}
+    .contact-send-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px}
+    .contact-send-options .btn{width:100%;min-width:0;white-space:normal}
+    .contact-send-options button:disabled{opacity:.55;cursor:not-allowed}
+    .contact-continuations{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
+    .contact-continuations[hidden]{display:none}
+    .contact-continuations a{color:#fff;text-decoration:underline;text-underline-offset:4px}
+    .contact-success{padding:13px 16px;border:1px solid rgba(115,230,185,.4);background:rgba(54,150,116,.14);border-radius:12px;color:#e1fff1}
+    .contact-success[hidden]{display:none}
+    @media(max-width:650px){.contact-send-options{grid-template-columns:1fr}}
   </style>
   <script>
+  /* Preview only. API origin is intentionally unconfigured until server HTTPS endpoint is verified. */
   (()=>{
-    const CHANNELS={
-      telegram:'https://t.me/XgWydWim95I4ZDEy',
-      whatsapp:'https://wa.me/79127630299',
-      max:'https://max.ru/u/f9LHodD0cOLam7rHWCiFmnHQAslcCxm8ibT0nnoDO153oOt2m2lwgbKu2dY',
-      vk:'https://vk.com/write861710891',
-      email:'mailto:20.13.25.iki@gmail.com'
-    };
-    // Anonymous goal events only after explicit consent to Yandex Metrica.
-    // These are clicks/attempted contact handoffs, never proof of a sent message.
-    const trackContactGoal=(eventName)=>{
-      let consent=null;
-      try { consent=localStorage.getItem('irina-metrica-consent-v1'); } catch (_) {}
-      if(consent!=='yes' || typeof window.ym!=='function')return;
-      const allowed=['contact_form_ready','contact_channel_email','contact_channel_whatsapp','contact_channel_telegram','contact_channel_max','contact_channel_vk','contact_entry'];
-      if(allowed.includes(eventName))window.ym(114152125,'reachGoal',eventName);
-    };
-    const COPY={
-      ru:{choose:'Выбрать способ отправки',prepared:'Обращение подготовлено. Выберите удобный канал.',manual:'Текст обращения подготовлен ниже. Скопируйте его вручную и вставьте в сообщение.',legal:'Русская версия юридических документов является основной.',title:'Выберите способ отправки',intro:'Вы сами подтвердите отправку во внешнем сервисе. До этого обращение не считается отправленным.',name:'Имя',reply:'Контакт для ответа',task:'Задача',source:'Источник',language:'Язык',time:'Подготовлено',consent:'Согласия подтверждены: обработка персональных данных и ознакомление с политиками.',version:'Версия согласия: 2026-11-05'},
-      en:{choose:'Choose how to send',prepared:'Your enquiry is prepared. Choose a convenient channel.',manual:'The enquiry text is shown below. Copy it manually and paste it into your message.',legal:'The Russian version of the legal documents is authoritative.',title:'Choose how to send',intro:'You will confirm sending in the external service. Until then, the enquiry is not considered sent.',name:'Name',reply:'Reply contact',task:'Project',source:'Source',language:'Language',time:'Prepared',consent:'Consents confirmed: personal data processing and acknowledgement of the policies.',version:'Consent version: 2026-11-05'},
-      it:{choose:'Scegli come inviare',prepared:'La richiesta è pronta. Scegli il canale più comodo.',manual:'Il testo della richiesta è visibile qui sotto. Copialo manualmente e incollalo nel messaggio.',legal:'La versione russa dei documenti legali è quella ufficiale.',title:'Scegli come inviare',intro:'Confermerai personalmente l’invio nel servizio esterno. Fino ad allora la richiesta non risulta inviata.',name:'Nome',reply:'Contatto per la risposta',task:'Progetto',source:'Fonte',language:'Lingua',time:'Preparato',consent:'Consensi confermati: trattamento dei dati personali e presa visione delle informative.',version:'Versione del consenso: 2026-11-05'}
-    };
-    const originalForm=document.getElementById('contact-form');
-    if(!originalForm)return;
-    const form=originalForm.cloneNode(true);originalForm.replaceWith(form);
-    const rename=(oldId,newId)=>{const element=document.getElementById(oldId);if(element)element.id=newId;const label=document.querySelector(`label[for="${oldId}"]`);if(label)label.htmlFor=newId;return element};
-    const name=rename('name','contact-name');
-    const reply=rename('reply','contact-reply');
-    const task=rename('task','contact-task');
-    const processing=rename('consent','processing-consent');
-    const awareness=rename('security-consent','privacy-awareness');
-    [name,reply,task].forEach(field=>field?.setAttribute('required',''));
-    [processing,awareness].forEach(field=>field?.setAttribute('required',''));
-    const choose=document.querySelector('button[form="contact-form"]');
-    choose.id='choose-channel';choose.type='button';choose.disabled=true;choose.dataset.contactI18n='';
+    'use strict';
+    const API_ORIGIN=(window.IRINA_LEADS_API_ORIGIN||'').replace(/\/$/,'');
+    const f=document.getElementById('contact-form');
+    if(!f)return;
+    const name=f.querySelector('#name'),reply=f.querySelector('#reply'),task=f.querySelector('#task');
+    const consent=document.getElementById('consent'),awareness=document.getElementById('security-consent');
     const status=document.getElementById('form-status');
-    const preparedWrap=document.createElement('div');
-    preparedWrap.className='contact-prepared';preparedWrap.hidden=true;
-    preparedWrap.innerHTML='<label for="prepared-message">Готовый текст обращения — сохраните перед переходом в мессенджер</label><textarea id="prepared-message" readonly rows="8"></textarea><button class="btn btn-secondary" type="button" id="copy-prepared">Скопировать текст обращения</button><p id="copy-prepared-status" class="form-status" aria-live="polite"></p>';
-    form.append(preparedWrap);
-    const legal=document.createElement('p');legal.className='legal-authority';legal.dataset.legalAuthority='';legal.dataset.contactI18n='';
-    document.querySelector('.legal')?.append(legal);
-    const modal=document.createElement('div');
-    modal.className='modal';modal.id='channel-modal';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-hidden','true');modal.setAttribute('aria-labelledby','channel-title');
-    modal.innerHTML='<div class="dialog"><button class="close-modal" type="button" aria-label="Закрыть">×</button><h2 id="channel-title"></h2><p id="channel-intro"></p><div class="channel-options"><a class="btn btn-primary" data-channel="email" href="mailto:20.13.25.iki@gmail.com">Письмо на почту</a><a class="btn btn-secondary" data-channel="telegram" href="https://t.me/XgWydWim95I4ZDEy" target="_blank" rel="noopener">Telegram — личные сообщения</a><a class="btn btn-secondary" data-channel="vk" href="https://vk.com/write861710891" target="_blank" rel="noopener">VK — личные сообщения</a><a class="btn btn-secondary" data-channel="whatsapp" href="https://wa.me/79127630299" target="_blank" rel="noopener">WhatsApp</a><a class="btn btn-secondary" data-channel="max" href="https://max.ru/u/f9LHodD0cOLam7rHWCiFmnHQAslcCxm8ibT0nnoDO153oOt2m2lwgbKu2dY" target="_blank" rel="noopener">MAX</a></div><label for="channel-prepared-message" style="display:block;margin-top:16px">Готовый текст заявки</label><textarea id="channel-prepared-message" readonly rows="7" style="display:block;width:100%;margin:8px 0;padding:12px;border-radius:12px;max-height:190px"></textarea><button type="button" class="btn btn-secondary" id="channel-copy">Скопировать текст заявки</button><p class="form-status" id="channel-status" aria-live="polite"></p></div>';
-    document.body.append(modal);modal.querySelector('#channel-title').dataset.contactI18n='';modal.querySelector('#channel-intro').dataset.contactI18n='';modal.querySelector('#channel-status').dataset.contactI18n='';status.dataset.contactI18n='';
-    const currentLanguage=()=>['ru','en','it'].includes(document.documentElement.lang)?document.documentElement.lang:'ru';
-    const updateCopy=()=>{const copy=COPY[currentLanguage()];choose.textContent=copy.choose;legal.textContent=copy.legal;modal.querySelector('#channel-title').textContent=copy.title;modal.querySelector('#channel-intro').textContent=copy.intro};
-    document.querySelectorAll('[data-language]').forEach(button=>{button.dataset.lang=button.dataset.language});document.addEventListener('irina-language-change',updateCopy);
-    updateCopy();
-    const isComplete=()=>[name,reply,task].every(field=>field.value.trim())&&processing.checked&&awareness.checked;
-    const updateState=()=>{choose.disabled=!isComplete()};
-    // Keep unfinished enquiry in this tab only; do not claim a server-side submission.
-    const draftKey='irina-contact-draft-preview-v1';
-    try{const d=JSON.parse(sessionStorage.getItem(draftKey)||'null');if(d){name.value=d.name||'';reply.value=d.reply||'';task.value=d.task||'';}}catch(_){}
-    const saveDraft=()=>{try{sessionStorage.setItem(draftKey,JSON.stringify({name:name.value,reply:reply.value,task:task.value}))}catch(_){}};
-    [name,reply,task,processing,awareness].forEach(field=>{field.addEventListener('input',updateState);field.addEventListener('change',updateState)});[name,reply,task].forEach(field=>field.addEventListener('input',saveDraft));form.addEventListener('submit',event=>{event.preventDefault();openChooser()});
-    const buildPreparedMessage=()=>{const language=currentLanguage(),copy=COPY[language];return [`${copy.name}: ${name.value.trim()}`,`${copy.reply}: ${reply.value.trim()}`,`${copy.task}: ${task.value.trim()}`,`${copy.source}: ${location.href}`,`${copy.language}: ${language.toUpperCase()}`,`${copy.time}: ${new Date().toISOString()}`,copy.consent,copy.version].join('\n')};
-    const openChooser=()=>{if(!isComplete()){updateState();return}trackContactGoal('contact_form_ready');const text=buildPreparedMessage();document.getElementById('prepared-message').value=text;modal.querySelector('#channel-prepared-message').value=text;modal.querySelector('[data-channel="email"]').href=`mailto:20.13.25.iki@gmail.com?subject=${encodeURIComponent('Запрос с сайта')}&body=${encodeURIComponent(text)}`;modal.querySelector('[data-channel="whatsapp"]').href=`${CHANNELS.whatsapp}?text=${encodeURIComponent(text)}`;preparedWrap.hidden=true;status.textContent='Заявка подготовлена. Для отправки выберите канал в открывшемся окне.';modal.classList.add('open');modal.setAttribute('aria-hidden','false');modal.querySelector('.close-modal').focus()};
-    const closeChooser=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');choose.focus()};
-    choose.addEventListener('click',openChooser);modal.querySelector('.close-modal').addEventListener('click',closeChooser);modal.addEventListener('click',event=>{if(event.target===modal)closeChooser()});
-    const copyText=async text=>{try{await navigator.clipboard.writeText(text);return true}catch{return false}};
-    const copyPrepared=async()=>{const text=document.getElementById('prepared-message').value;const ok=await copyText(text);if(!ok){const box=document.getElementById('prepared-message');box.focus();box.select()}document.getElementById('copy-prepared-status').textContent=ok?'Текст скопирован. Теперь откройте личные сообщения и вставьте его.':'Текст выделен: нажмите Ctrl+C, затем вставьте в сообщение.'};
-    document.getElementById('copy-prepared').addEventListener('click',copyPrepared);modal.querySelector('#channel-copy').addEventListener('click',async()=>{const t=modal.querySelector('#channel-prepared-message');try{await navigator.clipboard.writeText(t.value);modal.querySelector('#channel-status').textContent='Текст скопирован. Вставьте его в личные сообщения.'}catch(_){t.focus();t.select();modal.querySelector('#channel-status').textContent='Текст выделен. Нажмите Ctrl+C для копирования.'}});
-    // Native mailto and Gmail receive the complete form. Telegram/VK do not support reliable
-    // direct-message prefill from a public website, so their links open chats while the
-    // exact prepared message remains visible and can be copied with one click.
-    modal.querySelectorAll('a[data-channel]').forEach(link=>link.addEventListener('click',event=>{
-      if(!isComplete()){event.preventDefault();return}
-      const channel=link.dataset.channel;
-      trackContactGoal('contact_channel_'+channel);
-      if(['telegram','vk','max'].includes(channel)){
-        // Copy in the same user gesture before the browser opens the chat tab.
-        const prepared=modal.querySelector('#channel-prepared-message').value;
-        navigator.clipboard?.writeText(prepared).then(()=>{
-          document.getElementById('channel-status').textContent='Текст заявки скопирован. Вставьте его в открывшуюся переписку и нажмите «Отправить».';
-        }).catch(()=>{
-          document.getElementById('channel-status').textContent='Скопируйте текст заявки кнопкой ниже, затем вставьте его в переписку.';
-        });
+    const footerButton=document.querySelector('button[form="contact-form"]');
+    if(footerButton)footerButton.remove();
+    const notice=f.querySelector('.contact-entry-notice');
+    if(notice)notice.textContent='Заполните заявку один раз. После её сохранения вы сможете открыть удобный канал связи. Повторно писать заявку не нужно.';
+    name.required=reply.required=task.required=true;
+    name.maxLength=100;reply.maxLength=200;task.maxLength=3000;
+    const fields=[name,reply,task];
+    const channels=document.createElement('div');
+    channels.className='contact-send-options';channels.setAttribute('role','group');channels.setAttribute('aria-label','Способ продолжения общения');
+    channels.innerHTML='<button type="submit" class="btn btn-primary" name="channel" value="email">Отправить · Email</button><button type="submit" class="btn btn-secondary" name="channel" value="telegram">Отправить · Telegram</button><button type="submit" class="btn btn-secondary" name="channel" value="vk">Отправить · VK</button>';
+    f.append(channels);
+    const receiptEl=document.createElement('p');receiptEl.className='contact-success';receiptEl.hidden=true;receiptEl.setAttribute('role','status');receiptEl.setAttribute('aria-live','polite');f.append(receiptEl);
+    const continuation=document.createElement('div');continuation.className='contact-continuations';continuation.hidden=true;f.append(continuation);
+    const contactLinks={email:'mailto:20.13.25.iki@gmail.com',telegram:'https://t.me/XgWydWim95I4ZDEy',vk:'https://vk.com/write861710891'};
+    const storeKey='irina-lead-pending-v2', receiptKey='irina-lead-receipt-v2';
+    let busy=false,accepted=null,pending=null;
+    const safeLoad=key=>{try{return JSON.parse(sessionStorage.getItem(key)||'null')}catch(_){return null}};
+    const safeSave=(key,obj)=>{try{sessionStorage.setItem(key,JSON.stringify(obj))}catch(_){}};
+    const safeRemove=key=>{try{sessionStorage.removeItem(key)}catch(_){}};
+    const lang=()=>['ru','en','it'].includes(document.documentElement.lang)?document.documentElement.lang:'ru';
+    const acceptedMsg=id=>({ru:'Заявка № '+id+' принята и сохранена. Повторно отправлять её не нужно.',en:'Request '+id+' has been saved. No need to submit it again.',it:'Richiesta '+id+' salvata. Non è necessario inviarla di nuovo.'})[lang()];
+    const message=(text,isError=true)=>{status.textContent=text;status.setAttribute('role',isError?'alert':'status')};
+    const snapshot=(channel)=>({name:name.value.trim(),reply:reply.value.trim(),task:task.value.trim(),channel,consent:{accepted:consent.checked,version:'PENDING_OPERATOR_APPROVAL'},source:'irina-card-preview-20261125',language:lang()});
+    const good=(p)=>p.name.length>=1&&p.name.length<=100&&p.reply.length>=3&&p.reply.length<=200&&p.task.length>=1&&p.task.length<=3000&&p.consent.accepted&&awareness.checked&&!/[\u0000]/.test(p.name+p.reply+p.task);
+    const link=(channel,a)=>{
+      const info=['Имя: '+a.payload.name,'Контакт: '+a.payload.reply,'Задача: '+a.payload.task,'Номер заявки: '+a.receipt].join('\n');
+      if(channel==='email')return contactLinks.email+'?subject='+encodeURIComponent('Обращение с сайта № '+a.receipt)+'&body='+encodeURIComponent(info);
+      if(channel==='telegram')return contactLinks.telegram+'?text='+encodeURIComponent('Здравствуйте! Я оставил(а) заявку № '+a.receipt+' на сайте.');
+      return contactLinks.vk;
+    };
+    const showAccepted=(a)=>{
+      accepted=a;pending=null;safeRemove(storeKey);safeSave(receiptKey,{receipt:a.receipt,payload:a.payload});
+      receiptEl.textContent=acceptedMsg(a.receipt);receiptEl.hidden=false;message('',false);
+      channels.hidden=true;continuation.textContent='';continuation.hidden=false;
+      const p=document.createElement('p');p.textContent='Заявка уже сохранена. Продолжить общение: ';continuation.append(p);
+      for(const channel of ['email','telegram','vk']){
+        const aEl=document.createElement('a');aEl.href=link(channel,a);aEl.textContent=channel.toUpperCase();
+        if(channel!=='email'){aEl.target='_blank';aEl.rel='noopener noreferrer';aEl.referrerPolicy='no-referrer'}
+        continuation.append(aEl);
       }
+      for(const field of [...fields,consent,awareness])field.disabled=true;
+    };
+    const old=safeLoad(storeKey);
+    if(old&&old.payload&&old.key){pending=old;for(const field of fields)field.value=old.payload[field.id]||'';}
+    const previous=safeLoad(receiptKey);
+    if(previous&&typeof previous.receipt==='string'&&previous.payload)showAccepted(previous);
+    fields.forEach(field=>field.addEventListener('input',()=>{
+      if(pending)pending=null;
     }));
-    document.querySelectorAll('.social,.contact-icon,.footer-icon,#write-to-me').forEach(entry=>{entry.dataset.contactEntry='';entry.href='#contact';entry.removeAttribute('target');entry.removeAttribute('rel');entry.removeAttribute('data-modal');entry.addEventListener('click',event=>{event.preventDefault();trackContactGoal('contact_entry');document.getElementById('contact').scrollIntoView({behavior:'smooth'});name.focus({preventScroll:true})})});
-    updateState();
+    const buttons=[...channels.querySelectorAll('button')];
+    const setBusy=x=>{busy=x;buttons.forEach(button=>button.disabled=x);fields.forEach(field=>field.readOnly=x);consent.disabled=x;awareness.disabled=x};
+    f.addEventListener('submit',async e=>{
+      e.preventDefault();if(busy||accepted)return;
+      const channel=e.submitter?.value;
+      if(!['email','telegram','vk'].includes(channel))return;
+      const p=snapshot(channel);
+      if(!good(p)){message('Проверьте имя, контакт, описание задачи и согласия.');return}
+      if(!API_ORIGIN||!/^https:\/\//.test(API_ORIGIN)){message('Приём заявок временно недоступен: защищённый сервер ещё не подключён. Ваши данные не отправлены.');return}
+      let attempt=pending&&JSON.stringify(pending.payload)===JSON.stringify(p)?pending:{payload:p,key:crypto.randomUUID()};
+      pending=attempt;safeSave(storeKey,attempt);
+      setBusy(true);message('Сохраняем заявку…',false);
+      const ctl=new AbortController();const timeout=setTimeout(()=>ctl.abort(),15000);
+      try{
+        const resp=await fetch(API_ORIGIN+'/api/leads',{method:'POST',mode:'cors',credentials:'omit',headers:{'Content-Type':'application/json','Idempotency-Key':attempt.key},body:JSON.stringify(p),signal:ctl.signal});
+        const body=await resp.json().catch(()=>({}));
+        if([200,201].includes(resp.status)&&body.status==='accepted'&&typeof body.receipt==='string'&&body.receipt.length<=60){
+          showAccepted({receipt:body.receipt,payload:p});
+        }else if(resp.status===409){pending=null;safeRemove(storeKey);message('Данные изменились после начала отправки. Проверьте форму и повторите попытку.')}
+        else if(resp.status===422)message('Проверьте данные и согласие, затем отправьте заявку ещё раз.');
+        else if(resp.status===429)message('Слишком много запросов. Повторите попытку позже.');
+        else message('Сервер не подтвердил сохранение заявки. Повторите отправку; дубликат не создастся.');
+      }catch(_){message('Не получено подтверждение от сервера. Повторите отправку: используется тот же номер попытки.');}
+      finally{clearTimeout(timeout);if(!accepted)setBusy(false)}
+    });
+    document.querySelectorAll('[data-contact-entry]').forEach(item=>item.addEventListener('click',e=>{e.preventDefault();document.getElementById('contact').scrollIntoView({behavior:'smooth'});name.focus({preventScroll:true})}));
   })();
   </script>
 <script>
