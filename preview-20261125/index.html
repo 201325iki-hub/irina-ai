@@ -213,7 +213,13 @@
       const channel=link.dataset.channel;
       trackContactGoal('contact_channel_'+(channel==='gmail'?'email':channel));
       if(['telegram','vk','max'].includes(channel)){
-        document.getElementById('channel-status').textContent='Откроются личные сообщения в браузере. Текст заявки не отправляется автоматически: сначала нажмите «Скопировать текст обращения», затем вставьте и отправьте.';
+        // Copy in the same user gesture before the browser opens the chat tab.
+        const prepared=document.getElementById('prepared-message').value;
+        navigator.clipboard?.writeText(prepared).then(()=>{
+          document.getElementById('channel-status').textContent='Текст заявки скопирован. Вставьте его в открывшуюся переписку и нажмите «Отправить».';
+        }).catch(()=>{
+          document.getElementById('channel-status').textContent='Скопируйте текст заявки кнопкой ниже, затем вставьте его в переписку.';
+        });
       }
     }));
     document.querySelectorAll('.social,.contact-icon,.footer-icon,#write-to-me').forEach(entry=>{entry.dataset.contactEntry='';entry.href='#contact';entry.removeAttribute('target');entry.removeAttribute('rel');entry.removeAttribute('data-modal');entry.addEventListener('click',event=>{event.preventDefault();trackContactGoal('contact_entry');document.getElementById('contact').scrollIntoView({behavior:'smooth'});name.focus({preventScroll:true})})});
